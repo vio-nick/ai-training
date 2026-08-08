@@ -38,10 +38,7 @@ dist/
 *.egg-info/
 pip-wheel-metadata/
 
-# Local data, generated artifacts, and model weights
-data/*
-!data/synthetic/
-!data/synthetic/**
+# Generated artifacts and model weights
 artifacts/
 checkpoints/
 models/
@@ -64,15 +61,3 @@ secrets/
 *.pem
 *.key
 credentials.json
-
-# Common serialized model formats
-*.ckpt
-*.joblib
-*.onnx
-*.pkl
-*.pickle
-*.pt
-*.pth
-
-# Keep reproducible test fixtures even when they use serialized formats
-!tests/fixtures/**

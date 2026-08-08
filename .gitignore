@@ -1,0 +1,78 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# Python bytecode, caches, and local environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.pyre/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+ENV/
+
+# Python packaging output
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Local data, generated artifacts, and model weights
+data/*
+!data/synthetic/
+!data/synthetic/**
+artifacts/
+checkpoints/
+models/
+outputs/
+logs/
+tmp/
+temp/
+
+# Experiment tracking and caches
+wandb/
+mlruns/
+.dvc/cache/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+!.env.template
+secrets/
+*.pem
+*.key
+credentials.json
+
+# Common serialized model formats
+*.ckpt
+*.joblib
+*.onnx
+*.pkl
+*.pickle
+*.pt
+*.pth
+
+# Keep reproducible test fixtures even when they use serialized formats
+!tests/fixtures/**

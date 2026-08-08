@@ -139,6 +139,8 @@
 
 完整的分工、阶段门、数据规范、实验记录、Git 流程和合并标准见 [TEAM_CONVENTION.md](TEAM_CONVENTION.md)。
 
+按角色执行的开发文档守则见 [成员 A：数据与基线](docs/member_a_data_baseline_guidelines.md) 和 [成员 B：融合、评估与推理](docs/member_b_fusion_evaluation_guidelines.md)。
+
 ## 依据文档
 
 项目目标、研究内容、时间安排和预期成果源自 [`docs/创新训练项目  骨质疏松骨折风险AI预测模型的构建.docx`](docs/%E5%88%9B%E6%96%B0%E8%AE%AD%E7%BB%83%E9%A1%B9%E7%9B%AE%20%20%E9%AA%A8%E8%B4%A8%E7%96%8F%E6%9D%BE%E9%AA%A8%E6%8A%98%E9%A3%8E%E9%99%A9AI%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%9E%84%E5%BB%BA.docx)（项目申请书）。如后续伦理审批、数据使用协议或指导教师确认的方案与申请书存在差异，以最新获批方案为准，并在 `docs/` 中记录变更。

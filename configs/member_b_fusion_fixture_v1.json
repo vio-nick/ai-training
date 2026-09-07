@@ -1,0 +1,9 @@
+{
+  "fixture_version": "member_b_fusion_fixture_v1",
+  "fixture_only": true,
+  "purpose": "Verify fusion interfaces and missing-modality behavior; not a clinical or GSTRIDE performance experiment.",
+  "modalities": ["gait_fixture", "bmd_fixture"],
+  "missing_modality_policies": ["error", "available_only", "impute_zero"],
+  "late_fusion_weights": {"gait_fixture": 0.7, "bmd_fixture": 0.3},
+  "hybrid_early_weight": 0.6
+}

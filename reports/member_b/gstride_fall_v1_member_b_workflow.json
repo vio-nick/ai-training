@@ -1,12 +1,48 @@
 {
+  "workflow_version": "member_b_gstride_fall_v1",
   "data_version": "gstride_fall_v1",
-  "evaluation_scope": "held-out GSTRIDE test set; retrospective faller recognition only",
-  "subgroup_caveat": "No demographic or clinical subgroup fields are present in the six-feature contract; unavailable fields are recorded as templates.",
+  "interface_contract": "gstride_fall_v1",
+  "task_definition": "Retrospective recognition of self-reported fall during the year before the gait test.",
+  "not_a_claim": "Not prospective fall prediction, fracture-risk prediction, osteoporosis diagnosis, or clinical screening.",
+  "config_sha256": {
+    "workflow": "36494cc068324eddda3f1fc29e8f13e6114d6da1dd3780a007d8b3e7c327c2d9",
+    "base_training": "6bd6e62967701be264a5ab0293767d605bcbdcaab3396e30f05b2434500b399e"
+  },
+  "split_sizes": {
+    "train": 98,
+    "validation": 32,
+    "test": 33
+  },
+  "environment": {
+    "python": "3.13.9",
+    "scikit_learn": "1.7.2"
+  },
+  "formal_modality": "gait_sensor_only",
+  "fusion": {
+    "status": "not_run_no_second_clinical_modality",
+    "reason": "No version-compatible BMD/hospital longitudinal modality is available."
+  },
   "models": {
     "logistic_regression": {
-      "selected_on": "validation",
+      "threshold_selected_on": "validation_max_balanced_accuracy",
       "threshold": 0.286539,
-      "calibration": {
+      "test_metrics": {
+        "n": 33,
+        "positive_rate": 0.5151515151515151,
+        "threshold": 0.286539,
+        "auroc": 0.7867647058823529,
+        "auprc": 0.7771033060506745,
+        "f1": 0.7894736842105263,
+        "balanced_accuracy": 0.7536764705882353,
+        "sensitivity": 0.8823529411764706,
+        "specificity": 0.625,
+        "brier_score": 0.2037004898349004,
+        "tp": 15,
+        "fp": 6,
+        "tn": 10,
+        "fn": 2
+      },
+      "calibration_on_held_out_test": {
         "n": 33,
         "brier_score": 0.2037004898349004,
         "expected_calibration_error": 0.13936336388009182,
@@ -52,7 +88,7 @@
           }
         ]
       },
-      "threshold_impact": [
+      "threshold_impact_on_held_out_test": [
         {
           "n": 33,
           "positive_rate": 0.5151515151515151,
@@ -135,16 +171,32 @@
         }
       ],
       "error_case_count": 8,
-      "subgroup_output": "reports/member_b/gstride_fall_v1_logistic_regression_subgroups.csv",
+      "subgroup_status": "Template records unavailable fields because the six-feature contract contains no demographic/clinical fields.",
       "explainability": {
-        "method": "signed standardized feature contribution to the fitted model log-odds",
-        "output": "reports/member_b/gstride_fall_v1_logistic_regression_feature_contributions.csv"
+        "method": "Signed standardized contribution to fitted logistic-regression log-odds; association only.",
+        "output": "reports/member_b/gstride_fall_v1_logistic_regression_framework_feature_contributions.csv"
       }
     },
     "random_forest": {
-      "selected_on": "validation",
+      "threshold_selected_on": "validation_max_balanced_accuracy",
       "threshold": 0.388417,
-      "calibration": {
+      "test_metrics": {
+        "n": 33,
+        "positive_rate": 0.5151515151515151,
+        "threshold": 0.388417,
+        "auroc": 0.7867647058823529,
+        "auprc": 0.8030009864889291,
+        "f1": 0.8,
+        "balanced_accuracy": 0.7867647058823529,
+        "sensitivity": 0.8235294117647058,
+        "specificity": 0.75,
+        "brier_score": 0.1840467301745372,
+        "tp": 14,
+        "fp": 4,
+        "tn": 12,
+        "fn": 3
+      },
+      "calibration_on_held_out_test": {
         "n": 33,
         "brier_score": 0.1840467301745372,
         "expected_calibration_error": 0.08608941153037977,
@@ -190,7 +242,7 @@
           }
         ]
       },
-      "threshold_impact": [
+      "threshold_impact_on_held_out_test": [
         {
           "n": 33,
           "positive_rate": 0.5151515151515151,
@@ -273,11 +325,31 @@
         }
       ],
       "error_case_count": 7,
-      "subgroup_output": "reports/member_b/gstride_fall_v1_random_forest_subgroups.csv",
+      "subgroup_status": "Template records unavailable fields because the six-feature contract contains no demographic/clinical fields.",
       "explainability": {
-        "method": "random-forest global impurity importance; not a causal or per-participant explanation",
-        "output": "reports/member_b/gstride_fall_v1_random_forest_feature_importance.csv"
+        "method": "Global random-forest impurity importance; not causal or per-participant explanation.",
+        "output": "reports/member_b/gstride_fall_v1_random_forest_framework_feature_importance.csv"
       }
     }
+  },
+  "inference_example": {
+    "input": {
+      "participant_id": "V001",
+      "step_speed_m_s": 1.353,
+      "cadence_strides_per_min": 59.01,
+      "stride_length_m": 1.213,
+      "double_support_pct": 32.3,
+      "swing_to_stance_ratio": 0.470813679245283,
+      "stride_time_cv_pct": 7.045009784735812
+    },
+    "output": {
+      "participant_id": "V001",
+      "predicted_probability": 0.15204149465056294,
+      "predicted_label": 0,
+      "decision_threshold": 0.388417,
+      "data_version": "gstride_fall_v1",
+      "model_name": "random_forest"
+    },
+    "assurance": "The public inference method selects feature columns only and does not consume the label."
   }
 }

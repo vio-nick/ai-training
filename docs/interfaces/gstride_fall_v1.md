@@ -23,6 +23,18 @@
 
 其余三项直接采用 GSTRIDE register 中的 Step Speed Avg、Cadence Avg 和 Stride Length Avg。数值字段按 CP1252 源文件读取，逗号小数点转为点；空字符串、`-` 和 `Incapable` 视为缺失。
 
+## 推理输出与展示分级
+
+推理接口保留 `predicted_probability`（范围 0--1 的原始模型分数），并输出 `predicted_probability_percent = predicted_probability * 100` 供 0%--100% 展示。展示分级使用原始概率 `p`，不应使用已四舍五入的百分数：
+
+| 条件 | `risk_level` | `risk_level_display` | 展示含义 |
+| --- | --- | --- | --- |
+| `p < 0.3` | `low` | 低风险 | 低于 30% |
+| `0.3 <= p <= 0.7` | `medium` | 中风险 | 30% 至 70%，含边界 |
+| `p > 0.7` | `high` | 高风险 | 高于 70% |
+
+该表是当前原型的固定展示分段，不是临床验证的风险分层。`predicted_label` 是按当前封版模型在验证集选定的 `decision_threshold` 生成的技术二元标记；它与上述低/中/高展示分级相互独立，不得互相替代。
+
 ## 训练与推理约束
 
 训练流程先按 `participant_id` 合并切分表，再仅用训练集拟合中位数插补和（逻辑回归时）标准化。验证集用于选择最大平衡准确率阈值；测试集只产生最终概率、标签和指标。模型输出是 `faller_last_year=1` 的概率，不是未来跌倒概率、骨折概率或诊断结论。

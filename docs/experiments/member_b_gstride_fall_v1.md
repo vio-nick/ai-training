@@ -2,6 +2,8 @@
 
 成员 B 已将训练、评估、校准、解释和轻量推理框架接入 `gstride_fall_v1`。正式结果只针对六项步态特征的回顾性跌倒者识别。无版本兼容的 BMD 或医院纵向第二模态，因此没有真实融合模型或融合性能。
 
+推理输出除原始 `predicted_probability` 外，提供 `predicted_probability_percent`（0%--100%）、`risk_level` 和中文 `risk_level_display`。展示规则为：`p < 0.3` 低风险，`0.3 <= p <= 0.7` 中风险，`p > 0.7` 高风险。此展示规则独立于验证集选定的 `decision_threshold`，且只针对回顾性自报跌倒者模型分数。
+
 ## 复现
 
 ```powershell

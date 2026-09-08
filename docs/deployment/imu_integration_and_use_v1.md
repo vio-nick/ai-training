@@ -120,12 +120,15 @@ result = deployed_model.predict_record(
 | --- | --- |
 | `participant_id` | 若传入则原样返回，用于关联。 |
 | `predicted_probability` | 对训练标签“既往一年自报跌倒者”的模型分数，不是未来跌倒概率。 |
+| `predicted_probability_percent` | 与 `predicted_probability * 100` 完全对应的 0%--100% 展示值。 |
+| `risk_level` | 固定展示分级：低风险 `< 30%`；中风险 `30%--70%`（含 30%、70%）；高风险 `> 70%`。这是研究原型的分段，不是临床验证的风险分层。 |
+| `risk_level_display` | `risk_level` 的中文展示值：低风险、中风险或高风险。 |
 | `predicted_label` | `predicted_probability >= decision_threshold` 的技术标记，不是风险等级或临床阳性结论。 |
 | `decision_threshold` | 当前封版模型阈值，必须随结果记录。 |
 | `data_version` | 必须是 `gstride_fall_v1`。 |
 | `model_name` | 产生结果的候选模型名称。 |
 
-应用层应额外返回或存储 `quality_status`、`model_release_id`、`measurement_id` 和错误代码。输入校验失败、模型文件校验失败或质量失败时，必须返回可处理的失败状态，不能返回默认 0 分、低风险或历史缓存结果。
+应用层应额外返回或存储 `quality_status`、`model_release_id`、`measurement_id` 和错误代码。展示时可将 `predicted_probability_percent` 保留一位小数；判定必须使用未经四舍五入的 `predicted_probability`，以避免边界值被错误分级。输入校验失败、模型文件校验失败或质量失败时，必须返回可处理的失败状态，不能返回默认 0 分、低风险或历史缓存结果。
 
 ## 6. 面向操作人员和使用者的展示规则
 

@@ -1,0 +1,283 @@
+{
+  "data_version": "gstride_fall_v1",
+  "evaluation_scope": "held-out GSTRIDE test set; retrospective faller recognition only",
+  "subgroup_caveat": "No demographic or clinical subgroup fields are present in the six-feature contract; unavailable fields are recorded as templates.",
+  "models": {
+    "logistic_regression": {
+      "selected_on": "validation",
+      "threshold": 0.286539,
+      "calibration": {
+        "n": 33,
+        "brier_score": 0.2037004898349004,
+        "expected_calibration_error": 0.13936336388009182,
+        "maximum_calibration_error": 0.18370610367892082,
+        "calibration_intercept": 0.5534065524706846,
+        "calibration_slope": 0.971762848508866,
+        "binning": "equal_width_probability_bins",
+        "bins": [
+          {
+            "lower_bound": 0.0,
+            "upper_bound": 0.2,
+            "n": 9,
+            "mean_predicted_probability": 0.11493176948152588,
+            "observed_positive_rate": 0.2222222222222222
+          },
+          {
+            "lower_bound": 0.2,
+            "upper_bound": 0.4,
+            "n": 5,
+            "mean_predicted_probability": 0.27123864103189477,
+            "observed_positive_rate": 0.4
+          },
+          {
+            "lower_bound": 0.4,
+            "upper_bound": 0.6000000000000001,
+            "n": 12,
+            "mean_predicted_probability": 0.48359777121277886,
+            "observed_positive_rate": 0.6666666666666666
+          },
+          {
+            "lower_bound": 0.6000000000000001,
+            "upper_bound": 0.8,
+            "n": 4,
+            "mean_predicted_probability": 0.6895937294867946,
+            "observed_positive_rate": 0.75
+          },
+          {
+            "lower_bound": 0.8,
+            "upper_bound": 1.0,
+            "n": 3,
+            "mean_predicted_probability": 0.8503727703455874,
+            "observed_positive_rate": 0.6666666666666666
+          }
+        ]
+      },
+      "threshold_impact": [
+        {
+          "n": 33,
+          "positive_rate": 0.5151515151515151,
+          "threshold": 0.25,
+          "auroc": 0.7867647058823529,
+          "auprc": 0.7771033060506745,
+          "f1": 0.7692307692307693,
+          "balanced_accuracy": 0.7224264705882353,
+          "sensitivity": 0.8823529411764706,
+          "specificity": 0.5625,
+          "brier_score": 0.2037004898349004,
+          "tp": 15,
+          "fp": 7,
+          "tn": 9,
+          "fn": 2,
+          "flagged_n": 22,
+          "flagged_rate": 0.6666666666666666,
+          "positive_predictive_value": 0.6818181818181818,
+          "negative_predictive_value": 0.8181818181818182
+        },
+        {
+          "n": 33,
+          "positive_rate": 0.5151515151515151,
+          "threshold": 0.286539,
+          "auroc": 0.7867647058823529,
+          "auprc": 0.7771033060506745,
+          "f1": 0.7894736842105263,
+          "balanced_accuracy": 0.7536764705882353,
+          "sensitivity": 0.8823529411764706,
+          "specificity": 0.625,
+          "brier_score": 0.2037004898349004,
+          "tp": 15,
+          "fp": 6,
+          "tn": 10,
+          "fn": 2,
+          "flagged_n": 21,
+          "flagged_rate": 0.6363636363636364,
+          "positive_predictive_value": 0.7142857142857143,
+          "negative_predictive_value": 0.8333333333333334
+        },
+        {
+          "n": 33,
+          "positive_rate": 0.5151515151515151,
+          "threshold": 0.5,
+          "auroc": 0.7867647058823529,
+          "auprc": 0.7771033060506745,
+          "f1": 0.6896551724137931,
+          "balanced_accuracy": 0.7316176470588236,
+          "sensitivity": 0.5882352941176471,
+          "specificity": 0.875,
+          "brier_score": 0.2037004898349004,
+          "tp": 10,
+          "fp": 2,
+          "tn": 14,
+          "fn": 7,
+          "flagged_n": 12,
+          "flagged_rate": 0.36363636363636365,
+          "positive_predictive_value": 0.8333333333333334,
+          "negative_predictive_value": 0.6666666666666666
+        },
+        {
+          "n": 33,
+          "positive_rate": 0.5151515151515151,
+          "threshold": 0.75,
+          "auroc": 0.7867647058823529,
+          "auprc": 0.7771033060506745,
+          "f1": 0.2857142857142857,
+          "balanced_accuracy": 0.5569852941176471,
+          "sensitivity": 0.17647058823529413,
+          "specificity": 0.9375,
+          "brier_score": 0.2037004898349004,
+          "tp": 3,
+          "fp": 1,
+          "tn": 15,
+          "fn": 14,
+          "flagged_n": 4,
+          "flagged_rate": 0.12121212121212122,
+          "positive_predictive_value": 0.75,
+          "negative_predictive_value": 0.5172413793103449
+        }
+      ],
+      "error_case_count": 8,
+      "subgroup_output": "reports/member_b/gstride_fall_v1_logistic_regression_subgroups.csv",
+      "explainability": {
+        "method": "signed standardized feature contribution to the fitted model log-odds",
+        "output": "reports/member_b/gstride_fall_v1_logistic_regression_feature_contributions.csv"
+      }
+    },
+    "random_forest": {
+      "selected_on": "validation",
+      "threshold": 0.388417,
+      "calibration": {
+        "n": 33,
+        "brier_score": 0.1840467301745372,
+        "expected_calibration_error": 0.08608941153037977,
+        "maximum_calibration_error": 0.3213393525092427,
+        "calibration_intercept": 0.4998568136022868,
+        "calibration_slope": 1.1234274704739855,
+        "binning": "equal_width_probability_bins",
+        "bins": [
+          {
+            "lower_bound": 0.0,
+            "upper_bound": 0.2,
+            "n": 9,
+            "mean_predicted_probability": 0.11280385694500744,
+            "observed_positive_rate": 0.1111111111111111
+          },
+          {
+            "lower_bound": 0.2,
+            "upper_bound": 0.4,
+            "n": 6,
+            "mean_predicted_probability": 0.30565528838045464,
+            "observed_positive_rate": 0.3333333333333333
+          },
+          {
+            "lower_bound": 0.4,
+            "upper_bound": 0.6000000000000001,
+            "n": 7,
+            "mean_predicted_probability": 0.5358035046336144,
+            "observed_positive_rate": 0.8571428571428571
+          },
+          {
+            "lower_bound": 0.6000000000000001,
+            "upper_bound": 0.8,
+            "n": 10,
+            "mean_predicted_probability": 0.664579496075212,
+            "observed_positive_rate": 0.7
+          },
+          {
+            "lower_bound": 0.8,
+            "upper_bound": 1.0,
+            "n": 1,
+            "mean_predicted_probability": 0.9439329085323847,
+            "observed_positive_rate": 1.0
+          }
+        ]
+      },
+      "threshold_impact": [
+        {
+          "n": 33,
+          "positive_rate": 0.5151515151515151,
+          "threshold": 0.25,
+          "auroc": 0.7867647058823529,
+          "auprc": 0.8030009864889291,
+          "f1": 0.8,
+          "balanced_accuracy": 0.7518382352941176,
+          "sensitivity": 0.9411764705882353,
+          "specificity": 0.5625,
+          "brier_score": 0.1840467301745372,
+          "tp": 16,
+          "fp": 7,
+          "tn": 9,
+          "fn": 1,
+          "flagged_n": 23,
+          "flagged_rate": 0.696969696969697,
+          "positive_predictive_value": 0.6956521739130435,
+          "negative_predictive_value": 0.9
+        },
+        {
+          "n": 33,
+          "positive_rate": 0.5151515151515151,
+          "threshold": 0.388417,
+          "auroc": 0.7867647058823529,
+          "auprc": 0.8030009864889291,
+          "f1": 0.8,
+          "balanced_accuracy": 0.7867647058823529,
+          "sensitivity": 0.8235294117647058,
+          "specificity": 0.75,
+          "brier_score": 0.1840467301745372,
+          "tp": 14,
+          "fp": 4,
+          "tn": 12,
+          "fn": 3,
+          "flagged_n": 18,
+          "flagged_rate": 0.5454545454545454,
+          "positive_predictive_value": 0.7777777777777778,
+          "negative_predictive_value": 0.8
+        },
+        {
+          "n": 33,
+          "positive_rate": 0.5151515151515151,
+          "threshold": 0.5,
+          "auroc": 0.7867647058823529,
+          "auprc": 0.8030009864889291,
+          "f1": 0.7272727272727273,
+          "balanced_accuracy": 0.7279411764705883,
+          "sensitivity": 0.7058823529411765,
+          "specificity": 0.75,
+          "brier_score": 0.1840467301745372,
+          "tp": 12,
+          "fp": 4,
+          "tn": 12,
+          "fn": 5,
+          "flagged_n": 16,
+          "flagged_rate": 0.48484848484848486,
+          "positive_predictive_value": 0.75,
+          "negative_predictive_value": 0.7058823529411765
+        },
+        {
+          "n": 33,
+          "positive_rate": 0.5151515151515151,
+          "threshold": 0.75,
+          "auroc": 0.7867647058823529,
+          "auprc": 0.8030009864889291,
+          "f1": 0.21052631578947367,
+          "balanced_accuracy": 0.5588235294117647,
+          "sensitivity": 0.11764705882352941,
+          "specificity": 1.0,
+          "brier_score": 0.1840467301745372,
+          "tp": 2,
+          "fp": 0,
+          "tn": 16,
+          "fn": 15,
+          "flagged_n": 2,
+          "flagged_rate": 0.06060606060606061,
+          "positive_predictive_value": 1.0,
+          "negative_predictive_value": 0.5161290322580645
+        }
+      ],
+      "error_case_count": 7,
+      "subgroup_output": "reports/member_b/gstride_fall_v1_random_forest_subgroups.csv",
+      "explainability": {
+        "method": "random-forest global impurity importance; not a causal or per-participant explanation",
+        "output": "reports/member_b/gstride_fall_v1_random_forest_feature_importance.csv"
+      }
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "data_version": "nhanes_2013_2018_public_v2",
+  "feature_table_path": "data/public/nhanes_2013_2018/processed/feature_table_nhanes_exploratory_v2.csv",
+  "split_path": "data/public/nhanes_2013_2018/processed/split_nhanes_exploratory_v2.csv",
+  "id_column": "participant_id",
+  "label_column": "fracture_history",
+  "weight_column": "survey_exam_weight",
+  "feature_columns": [
+    "osteoporosis_diagnosis",
+    "age_years",
+    "sex_at_birth",
+    "bmi_kg_m2",
+    "lumbar_spine_bmd_g_cm2",
+    "pelvis_bmd_g_cm2",
+    "head_bmd_g_cm2",
+    "smoking_ever",
+    "smoking_current",
+    "alcohol_ever",
+    "vigorous_activity",
+    "moderate_activity",
+    "high_blood_pressure",
+    "diabetes",
+    "coronary_heart_disease",
+    "heart_attack",
+    "stroke",
+    "survey_cycle"
+  ],
+  "random_seed": 20260808,
+  "preprocessing": {
+    "fit_split": "train",
+    "numeric_imputer": "median_with_missing_indicators",
+    "categorical_imputer": "constant_missing",
+    "categorical_encoder": "one_hot_handle_unknown_ignore",
+    "numeric_scaling": "standard"
+  },
+  "model_selection_split": "validation",
+  "final_evaluation_split": "test",
+  "threshold_selection": "validation_max_sensitivity_at_specificity_0_5_and_fixed_0_5",
+  "cross_validation": {
+    "n_splits": 5,
+    "n_repeats": 3
+  },
+  "models": {
+    "logistic_regression": {
+      "C": 0.3,
+      "max_iter": 3000,
+      "class_weight": "balanced"
+    },
+    "random_forest": {
+      "n_estimators": 500,
+      "max_depth": 6,
+      "min_samples_leaf": 5,
+      "class_weight": "balanced",
+      "n_jobs": 1
+    }
+  }
+}

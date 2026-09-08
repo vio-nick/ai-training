@@ -49,6 +49,7 @@ D:\anaconda3\python.exe -m unittest discover -s tests
 - [成员 B 集成审计](docs/experiments/member_b_integration_audit.md)
 - [成员 B 执行日志](docs/experiments/member_b_execution_log.md)
 - [模型卡](docs/model_cards/gstride_fall_v1.md)
+- [IMU 接入与使用说明](docs/deployment/imu_integration_and_use_v1.md)
 
 ## 研究边界
 

@@ -69,6 +69,17 @@ def main() -> None:
         "split_sizes": {"train": len(train), "validation": len(validation), "test": len(test)},
         "environment": {"python": platform.python_version(), "scikit_learn": sklearn.__version__},
         "formal_modality": "gait_sensor_only",
+        "risk_display_policy": {
+            "score_semantics": "Retrospective model score for self-reported fall during the year before the gait test; not prospective fall risk.",
+            "probability_percent_formula": "predicted_probability * 100",
+            "classification_input": "unrounded predicted_probability",
+            "bands": [
+                {"risk_level": "low", "risk_level_display": "低风险", "condition": "p < 0.3", "percentage_range": "< 30%"},
+                {"risk_level": "medium", "risk_level_display": "中风险", "condition": "0.3 <= p <= 0.7", "percentage_range": "30%--70% (inclusive)"},
+                {"risk_level": "high", "risk_level_display": "高风险", "condition": "p > 0.7", "percentage_range": "> 70%"},
+            ],
+            "decision_threshold_note": "The model-specific decision_threshold creates predicted_label and is independent of the three display bands.",
+        },
         "fusion": {"status": workflow["fusion_result_status"], "reason": "No version-compatible BMD/hospital longitudinal modality is available."},
         "models": {},
     }

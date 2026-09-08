@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from fall_prediction.contracts import ContractValidationError, InputContract, validate_feature_frame
 from fall_prediction.fusion import ModalitySpec, early_fuse_features, hybrid_fuse_probabilities, late_fuse_probabilities
+from fall_prediction.inference import classify_risk_level
 from fall_prediction.training import fit_single_modality, select_threshold_on_validation
 
 
@@ -55,8 +56,19 @@ class MemberBCoreTests(unittest.TestCase):
         response = model.predict_record(record, data_version="gstride_fall_v1")
         self.assertEqual(response["participant_id"], row.iloc[0]["participant_id"])
         self.assertNotIn("faller_last_year", response)
+        self.assertAlmostEqual(response["predicted_probability_percent"], response["predicted_probability"] * 100)
+        self.assertIn(response["risk_level"], {"low", "medium", "high"})
+        self.assertIn(response["risk_level_display"], {"低风险", "中风险", "高风险"})
         with self.assertRaises(ContractValidationError):
             model.predict_record(record, data_version="gstride_fall_v2")
+
+    def test_risk_levels_use_the_requested_inclusive_middle_boundaries(self) -> None:
+        levels = classify_risk_level([0.0, 0.299999, 0.3, 0.5, 0.7, 0.700001, 1.0])
+        self.assertEqual(levels.tolist(), ["low", "low", "medium", "medium", "medium", "high", "high"])
+        with self.assertRaises(ValueError):
+            classify_risk_level([-0.01])
+        with self.assertRaises(ValueError):
+            classify_risk_level([1.01])
 
     def test_fusion_interfaces_have_explicit_missing_modality_behaviour(self) -> None:
         frame = pd.DataFrame({"gait": [0.2, 0.8], "bmd": [0.4, np.nan]})

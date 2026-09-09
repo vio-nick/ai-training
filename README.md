@@ -31,6 +31,24 @@
 
 该分级是当前研究原型的展示规则。模型标签和概率只针对“步态测试前一年内自报发生过跌倒”的回顾性任务，不能解释为临床验证的未来跌倒、骨折或骨质疏松风险。`predicted_label` 仍由模型发布包中验证集选定的 `decision_threshold` 产生，和三级展示分级不是同一规则。
 
+## 模型发布与新数据推理
+
+模型只应使用已批准的历史 GSTRIDE 数据训练一次并生成固定发布包；后续用户新数据只能加载该发布包进行评分，不得参与重新训练、插补器/标准化器拟合、阈值选择、校准或性能指标更新。当前仓库已提供发布包目录 `artifacts/model_releases/gstride_fall_v1_random_forest_full_historical/`，其中包含 `model.joblib` 和带 SHA-256 校验的 `manifest.json`。
+
+首次生成或有意更新模型版本时运行：
+
+```powershell
+D:/python-3.12.8/python.exe scripts/release_gstride_fall_model.py
+```
+
+之后对一条或多条新记录评分时，只运行：
+
+```powershell
+D:/python-3.12.8/python.exe scripts/score_gstride_fall_release.py --release-dir artifacts/model_releases/gstride_fall_v1_random_forest_full_historical --input-json new_record.json --output reports/new_record_score.json
+```
+
+批量评分可将 `--input-json` 换为 `--input-csv path/to/records.csv`。评分命令不会读取历史标签来训练模型，也不会修改发布包或现有评估指标。完整字段要求、发布包校验和异常处理见 [固定模型发布与推理说明](docs/deployment/model_release_and_inference_v1.md)。
+
 ## 复现
 
 需要 Python 3.11+，并安装 `pandas`、`numpy` 和 `scikit-learn`。
@@ -56,6 +74,7 @@ D:\anaconda3\python.exe -m unittest discover -s tests
 - [成员 B 执行日志](docs/experiments/member_b_execution_log.md)
 - [模型卡](docs/model_cards/gstride_fall_v1.md)
 - [IMU 接入与使用说明](docs/deployment/imu_integration_and_use_v1.md)
+- [固定模型发布与推理说明](docs/deployment/model_release_and_inference_v1.md)
 
 ## 研究边界
 

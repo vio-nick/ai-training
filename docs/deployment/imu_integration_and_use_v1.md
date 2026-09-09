@@ -92,7 +92,7 @@ IMU 原始信号
 
 ### 5.1 模型封版要求
 
-仓库提供可复现的训练和推理代码，但没有可直接投产的通用模型二进制包。部署团队必须从固定配置生成候选模型并建立不可变发布包，至少包括：
+仓库提供可复现的训练和推理代码，并提供一次性生成固定模型发布包的脚本。部署团队必须从固定配置和已批准的历史数据生成不可变发布包；后续新采集数据只能使用该发布包推理，不得重新训练或更新评估指标。发布包至少包括：
 
 - 经审批的序列化模型及其 SHA-256；
 - `gstride_fall_v1` 输入契约和字段顺序；
@@ -101,13 +101,33 @@ IMU 原始信号
 - 验证集阈值、阈值选择规则和适用范围；
 - 本说明、模型卡和已知限制。
 
+当前实现的发布命令为：
+
+```powershell
+D:/python-3.12.8/python.exe scripts/release_gstride_fall_model.py
+```
+
+默认命令使用 `gstride_fall_v1` 的 163 条历史特征记录拟合随机森林。决策阈值只在固定验证集上选择一次，然后将预处理器、模型和阈值一起保存到：
+
+```text
+artifacts/model_releases/gstride_fall_v1_random_forest_full_historical/
+```
+
+目录中的 `manifest.json` 记录模型文件、训练数据、切分文件和配置的哈希及训练范围；`model.joblib` 保存已拟合的完整流水线。需要有意发布新模型版本时才重新运行发布命令，并通过 `--overwrite` 明确替换已有发布包。
+
 不得在客户端或设备端使用新采集数据重新拟合插补器、标准化器、阈值或模型。模型、预处理器和阈值必须作为同一发布包原子更新；任一项变化均视为新模型版本。
 
-现有工作流以随机森林作为推理示例。其工程回归参考阈值为 `0.388417`，来自固定验证集“最大平衡准确率”选择，不能理解为通用医疗阈值。该候选模型在 33 人固定测试集上的敏感度为 0.8235、特异度为 0.7500、AUROC 为 0.7868、AUPRC 为 0.8030；样本很小，不能外推到新设备、人群或场景。
+当前发布包以随机森林作为推理示例。其固定阈值由验证集“最大平衡准确率”规则选择（当前发布包为 `0.483566`），不能理解为通用医疗阈值。该模型在 33 人固定测试集上的性能数字仅用于原型管线审计，样本很小，不能外推到新设备、人群或场景。
 
 ### 5.2 调用与返回格式
 
-推理使用 `FallerInferenceModel.predict_record` 或 `predict_frame`。接口只从请求中选择六项特征，并复用训练时已拟合的预处理器。
+部署时应优先使用只加载已发布模型包的评分命令；它不会重新训练模型，也不会将新数据加入训练或评估。单条 JSON 记录示例：
+
+```powershell
+D:/python-3.12.8/python.exe scripts/score_gstride_fall_release.py --release-dir artifacts/model_releases/gstride_fall_v1_random_forest_full_historical --input-json new_record.json --output reports/new_record_score.json
+```
+
+批量评分可将 `--input-json` 换为 `--input-csv path/to/records.csv`。应用内直接调用时，使用已加载发布包中的 `FallerInferenceModel.predict_record` 或 `predict_frame`；接口只从请求中选择六项特征，并复用发布包中已拟合的预处理器。
 
 ```python
 result = deployed_model.predict_record(

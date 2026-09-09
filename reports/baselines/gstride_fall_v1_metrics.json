@@ -1,10 +1,10 @@
 {
   "data_version": "gstride_fall_v1",
-  "config_sha256": "6bd6e62967701be264a5ab0293767d605bcbdcaab3396e30f05b2434500b399e",
+  "config_sha256": "4eb9ffb1b09d66bd6558fc1b1bac57e3d18ef9d8dfecc31e68afce193af396a9",
   "seed": 20260907,
   "environment": {
-    "python": "3.13.9",
-    "scikit_learn": "1.7.2"
+    "python": "3.12.8",
+    "scikit_learn": "1.9.0"
   },
   "label": "faller_last_year (self-reported fall during the year before the gait test; retrospective)",
   "feature_columns": [
@@ -32,7 +32,7 @@
         "balanced_accuracy": 0.803921568627451,
         "sensitivity": 0.9411764705882353,
         "specificity": 0.6666666666666666,
-        "brier_score": 0.17819914789284605,
+        "brier_score": 0.17819914789284602,
         "tp": 16,
         "fp": 5,
         "tn": 10,
@@ -48,7 +48,7 @@
         "balanced_accuracy": 0.7536764705882353,
         "sensitivity": 0.8823529411764706,
         "specificity": 0.625,
-        "brier_score": 0.2037004898349004,
+        "brier_score": 0.20370048983490044,
         "tp": 15,
         "fp": 6,
         "tn": 10,
@@ -64,63 +64,63 @@
         "brier_score": 0.20149699215069786
       },
       "feature_effects": {
-        "step_speed_m_s": -0.822148406580797,
-        "cadence_strides_per_min": -0.08004140299149846,
-        "stride_length_m": -0.38117744979508306,
-        "double_support_pct": 0.3018961671413417,
-        "swing_to_stance_ratio": -0.5304087313261716,
-        "stride_time_cv_pct": -0.11891865527241827
+        "step_speed_m_s": -0.8221484065807976,
+        "cadence_strides_per_min": -0.08004140299149765,
+        "stride_length_m": -0.38117744979508167,
+        "double_support_pct": 0.30189616714134165,
+        "swing_to_stance_ratio": -0.5304087313261725,
+        "stride_time_cv_pct": -0.11891865527241789
       }
     },
     "random_forest": {
       "validation": {
         "n": 32,
         "positive_rate": 0.53125,
-        "threshold": 0.388417,
-        "auroc": 0.7921568627450981,
-        "auprc": 0.8219494811863488,
-        "f1": 0.8108108108108109,
-        "balanced_accuracy": 0.7745098039215685,
-        "sensitivity": 0.8823529411764706,
-        "specificity": 0.6666666666666666,
-        "brier_score": 0.18262869830980472,
-        "tp": 15,
-        "fp": 5,
-        "tn": 10,
-        "fn": 2
+        "threshold": 0.483566,
+        "auroc": 0.7843137254901961,
+        "auprc": 0.8169858001816226,
+        "f1": 0.7647058823529411,
+        "balanced_accuracy": 0.7490196078431373,
+        "sensitivity": 0.7647058823529411,
+        "specificity": 0.7333333333333333,
+        "brier_score": 0.18362501360834171,
+        "tp": 13,
+        "fp": 4,
+        "tn": 11,
+        "fn": 4
       },
       "test": {
         "n": 33,
         "positive_rate": 0.5151515151515151,
-        "threshold": 0.388417,
-        "auroc": 0.7867647058823529,
-        "auprc": 0.8030009864889291,
-        "f1": 0.8,
-        "balanced_accuracy": 0.7867647058823529,
-        "sensitivity": 0.8235294117647058,
+        "threshold": 0.483566,
+        "auroc": 0.7904411764705882,
+        "auprc": 0.8034699619579047,
+        "f1": 0.7647058823529411,
+        "balanced_accuracy": 0.7573529411764706,
+        "sensitivity": 0.7647058823529411,
         "specificity": 0.75,
-        "brier_score": 0.1840467301745372,
-        "tp": 14,
+        "brier_score": 0.18437690797607872,
+        "tp": 13,
         "fp": 4,
         "tn": 12,
-        "fn": 3
+        "fn": 4
       },
       "training_only_repeated_cv": {
         "scope": "train_only",
         "n_predictions": 490,
         "n_splits": 5,
         "n_repeats": 5,
-        "auroc": 0.7144816053511707,
-        "auprc": 0.7355426552367658,
-        "brier_score": 0.2142371889888779
+        "auroc": 0.7180434782608696,
+        "auprc": 0.7394757545242168,
+        "brier_score": 0.21326907476255091
       },
       "feature_effects": {
-        "step_speed_m_s": 0.23172532855148872,
-        "cadence_strides_per_min": 0.09863077102793101,
-        "stride_length_m": 0.1770974665880287,
-        "double_support_pct": 0.17798195793656907,
-        "swing_to_stance_ratio": 0.19878017091742717,
-        "stride_time_cv_pct": 0.11578430497855528
+        "step_speed_m_s": 0.23204001864945262,
+        "cadence_strides_per_min": 0.09350695455102571,
+        "stride_length_m": 0.1759378181201776,
+        "double_support_pct": 0.18137902125197003,
+        "swing_to_stance_ratio": 0.21076632985217497,
+        "stride_time_cv_pct": 0.1063698575751991
       }
     }
   }

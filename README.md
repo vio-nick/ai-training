@@ -49,6 +49,10 @@ D:/python-3.12.8/python.exe scripts/score_gstride_fall_release.py --release-dir 
 
 批量评分可将 `--input-json` 换为 `--input-csv path/to/records.csv`。评分命令不会读取历史标签来训练模型，也不会修改发布包或现有评估指标。完整字段要求、发布包校验和异常处理见 [固定模型发布与推理说明](docs/deployment/model_release_and_inference_v1.md)。
 
+每条 JSON 评分结果还包含 `feature_contributions`，用于前端绘制六项特征的正/负贡献横向条形图。该数组按特征契约顺序返回，每项包含中文名称、单位、输入值、带符号的概率贡献、百分比贡献和 `direction`。`feature_contribution_baseline_probability` 加上六项贡献可在浮点误差内复原 `predicted_probability`。CSV 没有嵌套数组类型，因此评分脚本将同一内容写入 `feature_contributions_json` 列；前端应优先使用 JSON 输出。
+
+贡献值是当前封版模型的局部解释，不是特征的因果效应，也不是临床风险变化。详情见 [GSTRIDE v1 接口契约](docs/interfaces/gstride_fall_v1.md)。
+
 ## 复现
 
 需要 Python 3.11+，并安装 `pandas`、`numpy` 和 `scikit-learn`。

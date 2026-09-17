@@ -20,6 +20,14 @@ FEATURE_COLUMNS = [
     "swing_to_stance_ratio",
     "stride_time_cv_pct",
 ]
+FEATURE_DISPLAY_METADATA = {
+    "step_speed_m_s": {"display_name": "步速", "unit": "m/s"},
+    "cadence_strides_per_min": {"display_name": "步频", "unit": "strides/min"},
+    "stride_length_m": {"display_name": "跨步长", "unit": "m"},
+    "double_support_pct": {"display_name": "双支撑比例", "unit": "%"},
+    "swing_to_stance_ratio": {"display_name": "摆动/支撑比", "unit": "无量纲"},
+    "stride_time_cv_pct": {"display_name": "步态时间变异度", "unit": "%"},
+}
 OUTPUT_COLUMNS = ["participant_id", "faller_last_year", *FEATURE_COLUMNS]
 
 # Database_register.csv has three documentation/header rows. These indices refer

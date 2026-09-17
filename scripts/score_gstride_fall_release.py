@@ -41,7 +41,16 @@ def _json_records(path: Path) -> list[dict[str, Any]]:
 def _write_output(path: Path, results: list[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.suffix.lower() == ".csv":
-        pd.DataFrame(results).to_csv(path, index=False, encoding="utf-8")
+        # CSV has no native nested-array type. Keep the explanation lossless as
+        # a JSON string and reserve the structured array for JSON consumers.
+        csv_results = []
+        for result in results:
+            row = dict(result)
+            row["feature_contributions_json"] = json.dumps(
+                row.pop("feature_contributions", []), ensure_ascii=False, separators=(",", ":")
+            )
+            csv_results.append(row)
+        pd.DataFrame(csv_results).to_csv(path, index=False, encoding="utf-8")
     elif path.suffix.lower() == ".json":
         path.write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     else:

@@ -38,3 +38,33 @@
 ## 训练与推理约束
 
 训练流程先按 `participant_id` 合并切分表，再仅用训练集拟合中位数插补和（逻辑回归时）标准化。验证集用于选择最大平衡准确率阈值；测试集只产生最终概率、标签和指标。模型输出是 `faller_last_year=1` 的概率，不是未来跌倒概率、骨折概率或诊断结论。
+
+## 六特征贡献输出
+
+为支持前端展示单条记录的横向条形图，推理响应增加以下字段：
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| `feature_contributions` | array | 按六项特征契约顺序排列的贡献对象；JSON 接口中保持为数组。 |
+| `feature_contribution_method` | string | 固定为 `exact_shapley_probability`。 |
+| `feature_contribution_baseline_probability` | number | 六项特征均用缺失值遮蔽后，经已拟合插补器得到的基线正类概率。 |
+| `feature_contribution_reconstructed_probability` | number | 基线概率加六项贡献后的重构概率，应与 `predicted_probability` 在浮点误差内一致。 |
+
+每个 `feature_contributions` 对象包含：
+
+```json
+{
+  "feature": "step_speed_m_s",
+  "display_name": "步速",
+  "unit": "m/s",
+  "value": 0.82,
+  "contribution_probability": -0.037,
+  "contribution_probability_percent": -3.7,
+  "direction": "negative",
+  "direction_display": "负贡献"
+}
+```
+
+`contribution_probability` 是对正类模型概率的加性贡献，正值表示提高模型分数，负值表示降低模型分数。前端可以按 `direction` 映射正负颜色，横轴使用 `contribution_probability_percent`，特征名称使用 `display_name`，并根据绝对值排序。建议优先消费 JSON；CSV 没有嵌套数组类型，评分脚本会将同一数组无损编码到 `feature_contributions_json` 列。
+
+该分解是模型解释，不是特征的因果效应，也不是临床风险变化。基线和贡献均依赖当前封版模型及其预处理器，模型版本变化后必须重新解释和记录。

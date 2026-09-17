@@ -6,11 +6,13 @@
 
 `FallerInferenceModel.predict_record` 接收六个数值字段：`step_speed_m_s`、`cadence_strides_per_min`、`stride_length_m`、`double_support_pct`、`swing_to_stance_ratio`、`stride_time_cv_pct`。`participant_id` 可选并原样返回。调用方应提供 `data_version="gstride_fall_v1"`。
 
-接口拒绝缺列、非数值、无穷值和版本不兼容的输入。`faller_last_year` 不是推理输入，即使记录带有该列也不会被读取。输出包括 `predicted_probability`（0--1 原始模型分数）、`predicted_probability_percent`（0--100 百分比）、`risk_level`（`low`、`medium`、`high`）、`risk_level_display`（低风险、中风险、高风险）、`predicted_label`、`decision_threshold`、`data_version` 和 `model_name`。
+接口拒绝缺列、非数值、无穷值和版本不兼容的输入。`faller_last_year` 不是推理输入，即使记录带有该列也不会被读取。输出包括 `predicted_probability`（0--1 原始模型分数）、`predicted_probability_percent`（0--100 百分比）、`risk_level`（`low`、`medium`、`high`）、`risk_level_display`（低风险、中风险、高风险）、`predicted_label`、`decision_threshold`、`data_version`、`model_name` 和 `feature_contributions`。
 
 展示分级固定为：`low` 为概率小于 `0.3`（小于 30%），`medium` 为 `0.3` 至 `0.7`（30% 至 70%，含边界），`high` 为概率大于 `0.7`（大于 70%）。`risk_level` 是为当前原型规定的展示分段；`predicted_label` 则仍按照当前封版模型的 `decision_threshold` 产生，两者不可混用。它们都只能对应“既往一年自报跌倒者”的回顾性模型分数，不能解释为经临床验证的未来跌倒风险。
 
 推理阶段只使用训练时已拟合的插补器/标准化器，不会重新拟合。
+
+`feature_contributions` 是六个特征对当前正类模型概率的精确 Shapley 加性分解。每项包含特征键、中文名称、单位、输入值、`contribution_probability`、百分比形式以及 `direction`（`positive`、`negative` 或 `neutral`）。`feature_contribution_baseline_probability` 加上六项贡献应在浮点误差内复原 `predicted_probability`。前端横向条形图应使用贡献值而不是随机森林的全局 `feature_importances_`；它们只表示模型内部解释，不表示因果作用。
 
 ## 融合接口
 

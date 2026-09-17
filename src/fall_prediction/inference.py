@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 
 from .contracts import InputContract, validate_feature_frame, validate_feature_record
+from .explainability import build_feature_contribution_records, exact_shapley_probability_contributions
 
 RISK_LEVEL_LOW_MAX_EXCLUSIVE = 0.3
 RISK_LEVEL_HIGH_MIN_EXCLUSIVE = 0.7
@@ -70,6 +71,15 @@ class FallerInferenceModel:
             "data_version": self.contract.data_version,
             "model_name": self.model_name,
         })
+        contributions, baselines, reconstructed = exact_shapley_probability_contributions(self.estimator, features)
+        output["feature_contributions"] = build_feature_contribution_records(
+            list(features.columns),
+            features.to_numpy(dtype=float, na_value=np.nan),
+            contributions,
+        )
+        output["feature_contribution_method"] = "exact_shapley_probability"
+        output["feature_contribution_baseline_probability"] = baselines
+        output["feature_contribution_reconstructed_probability"] = reconstructed
         if self.contract.id_column and self.contract.id_column in frame.columns:
             output.insert(0, self.contract.id_column, frame[self.contract.id_column].to_numpy())
         return output

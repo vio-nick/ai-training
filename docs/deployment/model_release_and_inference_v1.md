@@ -45,6 +45,8 @@ D:\python-3.12.8\python.exe scripts\score_gstride_fall_release.py `
   --output reports\new_record_score.json
 ```
 
-For batch scoring, provide `--input-csv path\to\records.csv` instead. A JSON input may also be an array of record objects. Scores contain the original model score, display percentage, fixed display band, technical predicted label, threshold, model name, and data version.
+For batch scoring, provide `--input-csv path\to\records.csv` instead. A JSON input may also be an array of record objects. Scores contain the original model score, display percentage, fixed display band, technical predicted label, threshold, model name, data version, and six local feature contributions. JSON output keeps `feature_contributions` as a nested array. CSV output uses the `feature_contributions_json` column because CSV has no native nested-array type; parse that cell as JSON before rendering the chart.
+
+The explanation array contains one object per GSTRIDE feature. `contribution_probability` is the signed change in positive-class model probability relative to the all-features-masked baseline, and `contribution_probability_percent` is the same value multiplied by 100. Positive values can be drawn with the positive color and negative values with the negative color. The six values plus `feature_contribution_baseline_probability` reconstruct `predicted_probability` within floating-point tolerance. This is a local model explanation, not a causal or clinical effect estimate.
 
 The six GSTRIDE fields must retain their documented definitions and units. In particular, `double_support_pct` and `stride_time_cv_pct` are 0--100 percentages. The output is a retrospective score for the public GSTRIDE faller label, not a future-fall probability, fracture risk, diagnosis, screening result, or treatment recommendation.

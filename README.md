@@ -87,3 +87,18 @@ D:\anaconda3\python.exe -m unittest discover -s tests
 ## 前端评估工作台
 
 `frontend/` 提供六项步态参数录入、真实模型评分和贡献解释图。运行步骤见 [前端说明](frontend/README.md) 与 [API 说明](api/README.md)。当前以项目演示为范围，不包含设备接入、历史保存和报告导出。
+
+### 如何打开前端
+
+1. 在仓库根目录启动 API 服务。具体环境准备和模型生成步骤见 [API 说明](api/README.md)。
+2. 另开一个终端，在仓库根目录执行：
+
+   ```powershell
+   cd frontend
+   npm ci
+   npm run dev
+   ```
+
+3. 在浏览器打开 `http://127.0.0.1:5173`。
+
+前端通过 Vite 将 `/api` 请求转发到本机的 `8000` 端口，因此 API 服务和前端开发服务需要同时运行。首次启动只需执行一次 `npm ci`；之后进入 `frontend` 目录运行 `npm run dev` 即可。更多前端功能范围和生产构建说明见 [frontend/README.md](frontend/README.md)。

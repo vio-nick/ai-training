@@ -65,4 +65,12 @@ credentials.json
 # Frontend
 node_modules/
 frontend/dist/
+frontend/.npm-cache/
+frontend/.vite/
+frontend/.vite-temp/
+frontend/pnpm-lock.yaml
 *.tsbuildinfo
+
+# Local development logs
+*.log
+.pnpm-store/

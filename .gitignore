@@ -61,3 +61,8 @@ secrets/
 *.pem
 *.key
 credentials.json
+
+# Frontend
+node_modules/
+frontend/dist/
+*.tsbuildinfo

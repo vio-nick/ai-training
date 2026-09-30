@@ -217,6 +217,21 @@ input {
   padding: 24px 24px 0;
   margin-bottom: 0;
 }
+.disclaimer {
+  margin: 16px 24px 0;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: #f1f6f8;
+  color: #435b70;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.result-error {
+  margin: 14px 24px 0;
+  color: #a73636;
+  font-size: 13px;
+  line-height: 1.6;
+}
 .empty {
   display: flex;
   align-items: center;

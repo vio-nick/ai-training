@@ -33,7 +33,6 @@ export default function App() {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(inputSchema),
@@ -46,15 +45,13 @@ export default function App() {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
-  const values = watch();
-  const stale =
-    result !== null && JSON.stringify(values) !== JSON.stringify(result.input);
   useEffect(() => () => controller.current?.abort(), []);
   async function submit(input: Inputs) {
     controller.current?.abort();
     const request = new AbortController();
     controller.current = request;
     setBusy(true);
+    setResult(null);
     setError("");
     const timer = window.setTimeout(() => request.abort(), 30000);
     try {
@@ -72,6 +69,10 @@ export default function App() {
       clearTimeout(timer);
       setBusy(false);
     }
+  }
+  function invalidSubmit() {
+    setResult(null);
+    setError("评估失败：请检查六项步态参数，所有参数都必须填写有效数值并处于允许范围。");
   }
   const data = result?.prediction.feature_contributions.map((c) => ({
     ...c,
@@ -106,13 +107,21 @@ export default function App() {
                       fields.map((f) => [f.key, f.example]),
                     ),
                   } as Inputs);
+                  setResult(null);
                   setError("");
                 }}
               >
                 填入示例
               </Button>
             </div>
-            <form onSubmit={handleSubmit(submit)} noValidate>
+            <form
+              onSubmit={handleSubmit(submit, invalidSubmit)}
+              onChange={() => {
+                setResult(null);
+                setError("");
+              }}
+              noValidate
+            >
               <fieldset disabled={busy}>
                 <div className="record">
                   <label htmlFor="participant_id">
@@ -194,35 +203,31 @@ export default function App() {
           >
             <div className="panel-heading">
               <h2 id="result-title">评估结果</h2>
-              {result && !busy && !stale && !error && (
+              {result && !busy && !error && (
                 <span className="completed">
                   <Check size={15} />
                   已完成
                 </span>
               )}
             </div>
+            <p className="disclaimer">
+              此结果是基于六项步态参数的研究分数，仅用于研究与技术演示，不能预测未来跌倒，不能用于诊断、筛查或医疗决策。
+            </p>
             <div aria-live="polite">
-              {error && result && (
-                <p className="stale">
-                  本次评估未完成，下方保留上次成功的结果。
-                </p>
-              )}
-              {stale && (
-                <p className="stale">
-                  参数已修改，下方仍为上次提交的结果，请重新评估。
-                </p>
-              )}
+              {error && <p className="result-error" role="alert">{error}</p>}
               {busy && <p className="stale">正在计算本次评分，请稍候…</p>}
               {!result ? (
                 <div className="empty">
                   <div className="empty-icon">
                     <Activity />
                   </div>
-                  <h3>{busy ? "正在评估" : "等待评估"}</h3>
+                  <h3>{busy ? "正在评估" : error ? "评估失败" : "等待评估"}</h3>
                   <p>
                     {busy
                       ? "模型正在计算评分与特征贡献。"
-                      : "完成参数输入后开始评估。"}
+                      : error
+                        ? "请修正输入或稍后重试。"
+                        : "完成参数输入后开始评估。"}
                   </p>
                 </div>
               ) : (
@@ -253,7 +258,7 @@ export default function App() {
                     <span>100%</span>
                   </div>
                   <p className="hint">
-                    分组仅用于展示，不代表未来跌倒或骨折概率。
+                    分组仅用于研究展示，不代表未来跌倒或骨折概率。
                   </p>
                 </div>
               )}
@@ -384,9 +389,6 @@ export default function App() {
             </div>
           ))}
         </div>
-        <footer>
-          本工具识别既往跌倒相关模式，不代表未来跌倒或骨折概率。不用于临床诊断。
-        </footer>
       </main>
     </>
   );

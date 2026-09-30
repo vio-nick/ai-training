@@ -23,27 +23,27 @@ export const fields = [
   },
   {
     key: "double_support_pct",
-    label: "双支撑比例",
+    label: "双支撑相（近似）",
     unit: "%",
     example: 24,
     hint: "两脚同时接触地面的时间占比，0–100",
   },
   {
     key: "swing_to_stance_ratio",
-    label: "摆动/支撑比",
+    label: "摆动/支撑相比值",
     unit: "",
     example: 0.31,
     hint: "摆动时间与支撑时间之比",
   },
   {
     key: "stride_time_cv_pct",
-    label: "跨步时间变异度",
+    label: "跨步时间变异系数",
     unit: "%",
     example: 8.5,
     hint: "跨步时间标准差 ÷ 均值 × 100",
   },
 ] as const;
-const number = z.number({ error: "请输入有效数值" }).min(0, "不能小于 0");
+const number = z.number({ error: "请输入有效数值" }).finite("请输入有限数值").min(0, "不能小于 0");
 export const inputSchema = z.object({
   participant_id: z.string().max(80, "编号最多 80 个字符"),
   step_speed_m_s: number,

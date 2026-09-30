@@ -102,3 +102,5 @@ D:\anaconda3\python.exe -m unittest discover -s tests
 3. 在浏览器打开 `http://127.0.0.1:5173`。
 
 前端通过 Vite 将 `/api` 请求转发到本机的 `8000` 端口，因此 API 服务和前端开发服务需要同时运行。首次启动只需执行一次 `npm ci`；之后进入 `frontend` 目录运行 `npm run dev` 即可。更多前端功能范围和生产构建说明见 [frontend/README.md](frontend/README.md)。
+
+部署到 Linux 服务器并通过 GitHub Actions 手动更新的步骤见 [部署说明](docs/deployment/github_actions_server.md)。

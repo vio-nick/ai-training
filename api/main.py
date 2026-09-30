@@ -60,9 +60,9 @@ class PredictRequest(BaseModel):
         ge=0, description="步频 (strides/min，跨步/分钟，不是 steps/min)"
     )
     stride_length_m: float = Field(ge=0, description="跨步长 (m)")
-    double_support_pct: float = Field(ge=0, le=100, description="双支撑比例 (%)")
-    swing_to_stance_ratio: float = Field(ge=0, description="摆动/支撑比，无量纲")
-    stride_time_cv_pct: float = Field(ge=0, description="跨步时间变异度 (%)")
+    double_support_pct: float = Field(ge=0, le=100, description="双支撑相（近似） (%)")
+    swing_to_stance_ratio: float = Field(ge=0, description="摆动/支撑相比值，无量纲")
+    stride_time_cv_pct: float = Field(ge=0, description="跨步时间变异系数 (%)")
 
 
 class FeatureContribution(BaseModel):

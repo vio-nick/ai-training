@@ -29,6 +29,45 @@ import {
 } from "@/lib/api";
 
 export default function App() {
+  const [started, setStarted] = useState(false);
+
+  if (started) return <Workbench />;
+
+  return (
+    <div className="home-page">
+      <header className="topbar">
+        <div className="brand">
+          <Activity aria-hidden="true" />
+          GSTRIDE
+        </div>
+        <span>v1.0</span>
+      </header>
+      <main className="home-main">
+        <section className="home-content" aria-labelledby="home-title">
+          <div className="home-icon" aria-hidden="true">
+            <Activity />
+          </div>
+          <p className="home-eyebrow">步态分析 · 跌倒风险研究</p>
+          <h1 id="home-title">
+            <span>基于IMU步态参数的</span>
+            <span>跌倒风险研究评估软件</span>
+          </h1>
+          <p className="home-description">
+            从步态参数出发，了解评估结果与特征解释。
+          </p>
+          <Button size="lg" className="home-start" onClick={() => setStarted(true)}>
+            开始使用
+            <ArrowRight data-icon="inline-end" aria-hidden="true" />
+          </Button>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+function Workbench() {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => titleRef.current?.focus(), []);
   const {
     register,
     handleSubmit,
@@ -90,7 +129,7 @@ export default function App() {
       </header>
       <main>
         <section className="intro">
-          <h1>步态评估工作台</h1>
+          <h1 ref={titleRef} tabIndex={-1}>步态评估工作台</h1>
           <p>输入六项步态参数，查看既往跌倒识别评分与特征解释。</p>
         </section>
         <div className="workbench">

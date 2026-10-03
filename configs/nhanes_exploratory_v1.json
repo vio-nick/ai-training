@@ -1,0 +1,39 @@
+{
+  "data_version": "nhanes_2017_2018_public_v1",
+  "feature_table_path": "data/public/nhanes_2017_2018/processed/feature_table_nhanes_exploratory_v1.csv",
+  "split_path": "data/public/nhanes_2017_2018/processed/split_nhanes_exploratory_v1.csv",
+  "id_column": "participant_id",
+  "label_column": "fracture_history",
+  "feature_columns": [
+    "age_years",
+    "sex_at_birth",
+    "bmi_kg_m2",
+    "lumbar_spine_bmd_g_cm2",
+    "pelvis_bmd_g_cm2",
+    "head_bmd_g_cm2"
+  ],
+  "random_seed": 20260808,
+  "preprocessing": {
+    "fit_split": "train",
+    "numeric_imputer": "median",
+    "categorical_encoder": "one_hot_handle_unknown_ignore",
+    "numeric_scaling": "standard"
+  },
+  "model_selection_split": "validation",
+  "final_evaluation_split": "test",
+  "threshold_selection": "validation_max_f1",
+  "models": {
+    "logistic_regression": {
+      "C": 1.0,
+      "max_iter": 2000,
+      "class_weight": "balanced"
+    },
+    "random_forest": {
+      "n_estimators": 300,
+      "max_depth": 6,
+      "min_samples_leaf": 3,
+      "class_weight": "balanced",
+      "n_jobs": 1
+    }
+  }
+}

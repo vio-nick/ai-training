@@ -1,0 +1,43 @@
+{
+  "data_version": "gstride_fall_v1",
+  "feature_table_path": "data/public/gstride_v1/processed/feature_table_gstride_fall_v1.csv",
+  "split_path": "data/public/gstride_v1/processed/split_gstride_fall_v1.csv",
+  "id_column": "participant_id",
+  "label_column": "faller_last_year",
+  "feature_columns": [
+    "step_speed_m_s",
+    "cadence_strides_per_min",
+    "stride_length_m",
+    "double_support_pct",
+    "swing_to_stance_ratio",
+    "stride_time_cv_pct"
+  ],
+  "random_seed": 20260907,
+  "preprocessing": {
+    "fit_split": "train",
+    "numeric_imputer": "median",
+    "numeric_scaling": "standard"
+  },
+  "model_selection_split": "validation",
+  "final_evaluation_split": "test",
+  "threshold_selection": "validation_max_balanced_accuracy",
+  "cross_validation": {
+    "n_splits": 5,
+    "n_repeats": 5,
+    "scope": "train_only"
+  },
+  "models": {
+    "logistic_regression": {
+      "C": 1.0,
+      "max_iter": 5000,
+      "class_weight": "balanced"
+    },
+    "random_forest": {
+      "n_estimators": 500,
+      "max_depth": 4,
+      "min_samples_leaf": 4,
+      "class_weight": "balanced",
+      "n_jobs": 1
+    }
+  }
+}

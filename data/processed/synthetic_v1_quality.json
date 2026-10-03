@@ -1,0 +1,38 @@
+{
+  "n_rows": 240,
+  "label_counts": {
+    "0": 158,
+    "1": 82
+  },
+  "missing_counts": {
+    "participant_id": 0,
+    "fracture_within_24m": 0,
+    "age_years": 0,
+    "sex_at_birth": 0,
+    "bmi_kg_m2": 0,
+    "prior_fracture": 0,
+    "smoker": 0,
+    "alcohol_use": 0,
+    "falls_last_year": 0,
+    "family_history": 0,
+    "lumbar_spine_t_score": 16,
+    "femoral_neck_t_score": 12,
+    "gait_speed_m_s": 31,
+    "stride_length_m": 26,
+    "plantar_peak_pressure_kpa": 30
+  },
+  "modality_complete_rows": {
+    "clinical": 240,
+    "bmd": 214,
+    "gait": 190,
+    "plantar_pressure": 210
+  },
+  "raw_sha256": "37a8d3a61bf3fc6fc9db5b442cfe179280d371ffeb74bed96e81ea20118782e4",
+  "feature_table_sha256": "37a8d3a61bf3fc6fc9db5b442cfe179280d371ffeb74bed96e81ea20118782e4",
+  "split_sha256": "0253301fcce0d4617238cf8aab9bb64b61116d4d62a0cd606f306325b48a25c0",
+  "split_counts": {
+    "train": 144,
+    "validation": 48,
+    "test": 48
+  }
+}

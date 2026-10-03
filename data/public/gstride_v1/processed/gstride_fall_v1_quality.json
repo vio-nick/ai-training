@@ -1,0 +1,70 @@
+{
+  "data_version": "gstride_fall_v1",
+  "n_rows": 163,
+  "label_column": "faller_last_year",
+  "label_definition": "1=reported one or more falls during the year before the gait test; 0=no reported fall",
+  "label_counts": {
+    "0": 77,
+    "1": 86
+  },
+  "feature_columns": [
+    "step_speed_m_s",
+    "cadence_strides_per_min",
+    "stride_length_m",
+    "double_support_pct",
+    "swing_to_stance_ratio",
+    "stride_time_cv_pct"
+  ],
+  "missing_counts": {
+    "participant_id": 0,
+    "faller_last_year": 0,
+    "step_speed_m_s": 0,
+    "cadence_strides_per_min": 0,
+    "stride_length_m": 0,
+    "double_support_pct": 0,
+    "swing_to_stance_ratio": 0,
+    "stride_time_cv_pct": 0
+  },
+  "value_ranges": {
+    "step_speed_m_s": {
+      "min": 0.12,
+      "max": 1.607
+    },
+    "cadence_strides_per_min": {
+      "min": 24.01,
+      "max": 66.37
+    },
+    "stride_length_m": {
+      "min": 0.291,
+      "max": 1.53
+    },
+    "double_support_pct": {
+      "min": 14.05,
+      "max": 39.58
+    },
+    "swing_to_stance_ratio": {
+      "min": 0.08849654567386775,
+      "max": 0.5392354124748492
+    },
+    "stride_time_cv_pct": {
+      "min": 2.3166023166023164,
+      "max": 20.29742765273312
+    }
+  },
+  "split_counts": {
+    "test": 33,
+    "train": 98,
+    "validation": 32
+  },
+  "source": {
+    "record": "Zenodo 8003441 (version v1.0)",
+    "doi": "10.5281/zenodo.8003441",
+    "license": "CC-BY-4.0",
+    "file": "GSTRIDE_database/Database_register.csv",
+    "encoding": "cp1252",
+    "sha256": "5350c8a2c4cac19d6c420af5dfaf28ebd13d5ed8dea2c400e14f16c89c99ed25"
+  },
+  "random_seed": 20260907,
+  "feature_table_sha256": "ded942439a96092b8a3da96a9c48370819614fcf340b29084bf4b57823f38478",
+  "split_sha256": "9ee495ead2c629c3b435415e4288fa277daece56ccf4689983c627c4c41b701f"
+}

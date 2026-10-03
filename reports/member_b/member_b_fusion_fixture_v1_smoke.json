@@ -1,0 +1,82 @@
+{
+  "fixture_version": "member_b_fusion_fixture_v1",
+  "fixture_only": true,
+  "clinical_performance_reported": false,
+  "labels_present": false,
+  "early_available_only": {
+    "columns": [
+      "gait_fixture_score"
+    ],
+    "metadata": {
+      "fusion_type": "early",
+      "used_modalities": [
+        "gait_fixture"
+      ],
+      "dropped_modalities": [
+        "bmd_fixture"
+      ],
+      "zero_imputed_modalities": []
+    }
+  },
+  "early_impute_zero": {
+    "values": {
+      "gait_fixture_score": [
+        0.2,
+        0.8
+      ],
+      "bmd_fixture_score": [
+        0.4,
+        0.0
+      ]
+    },
+    "metadata": {
+      "fusion_type": "early",
+      "used_modalities": [
+        "gait_fixture",
+        "bmd_fixture"
+      ],
+      "dropped_modalities": [],
+      "zero_imputed_modalities": [
+        "bmd_fixture"
+      ]
+    }
+  },
+  "late": {
+    "probabilities": [
+      0.26,
+      0.74
+    ],
+    "metadata": {
+      "fusion_type": "late",
+      "used_modalities": [
+        "gait_fixture",
+        "bmd_fixture"
+      ],
+      "missing_policy": "error",
+      "weights": {
+        "gait_fixture": 0.7,
+        "bmd_fixture": 0.3
+      }
+    }
+  },
+  "hybrid": {
+    "probabilities": [
+      0.28400000000000003,
+      0.716
+    ],
+    "metadata": {
+      "fusion_type": "hybrid",
+      "early_weight": 0.6,
+      "late": {
+        "fusion_type": "late",
+        "used_modalities": [
+          "late_fixture"
+        ],
+        "missing_policy": "error",
+        "weights": {
+          "late_fixture": 1.0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "data_version": "synthetic_v1",
+  "config_sha256": "44d331662baaa3c46eb3e6ffd20e40df68f016204fc85aa0cf69fe01930363ff",
+  "seed": 20260808,
+  "environment": {
+    "python": "3.12.8",
+    "scikit_learn": "1.9.0"
+  },
+  "models": {
+    "logistic_regression": {
+      "validation": {
+        "n": 48,
+        "positive_rate": 0.3333333333333333,
+        "threshold": 0.579842,
+        "auroc": 0.765625,
+        "auprc": 0.6913993407493308,
+        "f1": 0.625,
+        "sensitivity": 0.625,
+        "specificity": 0.8125,
+        "brier_score": 0.2055691350317597,
+        "tp": 10,
+        "fp": 6,
+        "tn": 26,
+        "fn": 6
+      },
+      "test": {
+        "n": 48,
+        "positive_rate": 0.3541666666666667,
+        "threshold": 0.579842,
+        "auroc": 0.7210626185958253,
+        "auprc": 0.6582059833972055,
+        "f1": 0.5714285714285714,
+        "sensitivity": 0.5882352941176471,
+        "specificity": 0.7419354838709677,
+        "brier_score": 0.21677920000484385,
+        "tp": 10,
+        "fp": 8,
+        "tn": 23,
+        "fn": 7
+      }
+    },
+    "random_forest": {
+      "validation": {
+        "n": 48,
+        "positive_rate": 0.3333333333333333,
+        "threshold": 0.409856,
+        "auroc": 0.796875,
+        "auprc": 0.6532446980371709,
+        "f1": 0.6842105263157895,
+        "sensitivity": 0.8125,
+        "specificity": 0.71875,
+        "brier_score": 0.18103025832072236,
+        "tp": 13,
+        "fp": 9,
+        "tn": 23,
+        "fn": 3
+      },
+      "test": {
+        "n": 48,
+        "positive_rate": 0.3541666666666667,
+        "threshold": 0.409856,
+        "auroc": 0.7590132827324477,
+        "auprc": 0.6429787990973667,
+        "f1": 0.5833333333333334,
+        "sensitivity": 0.8235294117647058,
+        "specificity": 0.45161290322580644,
+        "brier_score": 0.19733351165038995,
+        "tp": 14,
+        "fp": 17,
+        "tn": 14,
+        "fn": 3
+      }
+    }
+  }
+}

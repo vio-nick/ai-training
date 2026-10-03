@@ -1,0 +1,67 @@
+{
+  "n_rows": 1771,
+  "label_counts": {
+    "0": 1362,
+    "1": 409
+  },
+  "cycle_counts": {
+    "2013_2014": 904,
+    "2017_2018": 867
+  },
+  "split_counts": {
+    "test": 355,
+    "train": 1062,
+    "validation": 354
+  },
+  "missing_counts": {
+    "participant_id": 0,
+    "fracture_history": 0,
+    "osteoporosis_diagnosis": 3,
+    "age_years": 0,
+    "sex_at_birth": 0,
+    "bmi_kg_m2": 0,
+    "lumbar_spine_bmd_g_cm2": 366,
+    "pelvis_bmd_g_cm2": 366,
+    "head_bmd_g_cm2": 239,
+    "smoking_ever": 0,
+    "smoking_current": 1367,
+    "alcohol_ever": 337,
+    "vigorous_activity": 3,
+    "moderate_activity": 0,
+    "high_blood_pressure": 0,
+    "diabetes": 60,
+    "coronary_heart_disease": 4,
+    "heart_attack": 3,
+    "stroke": 4,
+    "survey_cycle": 0,
+    "survey_exam_weight": 0,
+    "survey_stratum": 0,
+    "survey_psu": 0
+  },
+  "source_sha256": {
+    "data\\public\\nhanes_2013_2014\\raw\\DEMO_H.xpt": "f8f0cbb3085a323d4cde22349b164878fea1e64dbc404e65b5815c7816b547d7",
+    "data\\public\\nhanes_2013_2014\\raw\\BMX_H.xpt": "fd5e9fc6e6aab0a4aee6e699f51497bbc9b62101f7f43aee924c473e38fd9442",
+    "data\\public\\nhanes_2013_2014\\raw\\OSQ_H.xpt": "274f668c24a0e725191e2f3b09fc9e3fda6b1e51853a5cadf069ca45cb6ae716",
+    "data\\public\\nhanes_2013_2014\\raw\\DXX_H.xpt": "792ebf3791156367832a01be0c96286ef8da1f540a1d674077f5af12951e99e5",
+    "data\\public\\nhanes_aux\\raw\\MCQ_H.xpt": "5c83210e6e1fe929282621322ed0f94d95cdb0a37ccaff36f703ab0b2e7b9dc6",
+    "data\\public\\nhanes_aux\\raw\\SMQ_H.xpt": "86d74bb8842ce6d60350944417cbd3e9ee39dd5a9fa1bda33426f276b673861f",
+    "data\\public\\nhanes_aux\\raw\\ALQ_H.xpt": "174e4dd21e05f81df8bc786a6e76253a2cdc07503cd7cde4c7dd1c1b9d3e3098",
+    "data\\public\\nhanes_aux\\raw\\PAQ_H.xpt": "fa35acbb489594e8e55350f7402a12b5a607805c28ec16246929d33237bd3269",
+    "data\\public\\nhanes_aux\\raw\\BPQ_H.xpt": "aa6ddeab80c73b074ccfd04ad010da404ecb91c048476a194594ce9552d03d49",
+    "data\\public\\nhanes_aux\\raw\\DIQ_H.xpt": "c74c7ccef65e6997dfac1db1e73bc3f63dec67c70b2e322ffc14f14ce27429a9",
+    "data\\public\\nhanes_2017_2018\\raw\\DEMO_J.xpt": "c0b46e0345ea19404928656277c8b0d10b0cca348a9b2fe4fc3c67e8b7ee73ec",
+    "data\\public\\nhanes_2017_2018\\raw\\BMX_J.xpt": "8d675e42d8826ac98714b2c3dd4c5138a5e353fb4424f7eff5e6db4a01ce838a",
+    "data\\public\\nhanes_2017_2018\\raw\\OSQ_J.xpt": "e278ea3b723456a7760f5ec288e0eac199300089587c1c457eb88a2a1b99e02b",
+    "data\\public\\nhanes_2017_2018\\raw\\DXX_J.xpt": "de16420ff3f978f72dbcc6a83c64de041440f29ad1f516f5e1cc5476af994ff1",
+    "data\\public\\nhanes_aux\\raw\\MCQ_J.xpt": "79c50c805a377fcd61d44fae8b86a16af0a5741f8b1aeebda918d7d743c68f98",
+    "data\\public\\nhanes_aux\\raw\\SMQ_J.xpt": "73c3708e540cbf520a566508aa629c3e4ba53cad77dae9388ca36384646455f4",
+    "data\\public\\nhanes_aux\\raw\\ALQ_J.xpt": "53006d407764ad16491f823d25f2781ba55363aee9cb304d3f5d9450cf25d5c1",
+    "data\\public\\nhanes_aux\\raw\\PAQ_J.xpt": "048120aa3a5c8b5cd457ad3e13dfd62d728b12ea6644960e933ad374ec907e79",
+    "data\\public\\nhanes_aux\\raw\\BPQ_J.xpt": "63cfe1c331a1e7d3534328ac86312a21ffee3e01aa189bc1f74d06855239e5aa",
+    "data\\public\\nhanes_aux\\raw\\DIQ_J.xpt": "1ecbf5360dfc331d1efbf32198553dc30e9a1f4cff0a907ed30ca72bac797f89"
+  },
+  "feature_table_sha256": "fbfef5975a107151195e4133a6b3400326d2381cb0d5c5fe32ecde9a987c44ac",
+  "split_sha256": "158a13bead850ffc49bcc35dbbc7c5715693975455810c3047880310ebeab562",
+  "seed": 20260808,
+  "label_definition": "OSQ080 historical fracture, cross-sectional exploratory endpoint; not a 24-month outcome"
+}

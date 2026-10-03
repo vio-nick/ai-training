@@ -1,0 +1,46 @@
+{
+  "data_version": "synthetic_v1",
+  "feature_table_path": "data/processed/feature_table_v1.csv",
+  "split_path": "data/splits/split_v1.csv",
+  "id_column": "participant_id",
+  "label_column": "fracture_within_24m",
+  "feature_columns": [
+    "age_years",
+    "sex_at_birth",
+    "bmi_kg_m2",
+    "prior_fracture",
+    "smoker",
+    "alcohol_use",
+    "falls_last_year",
+    "family_history",
+    "lumbar_spine_t_score",
+    "femoral_neck_t_score",
+    "gait_speed_m_s",
+    "stride_length_m",
+    "plantar_peak_pressure_kpa"
+  ],
+  "random_seed": 20260808,
+  "preprocessing": {
+    "fit_split": "train",
+    "numeric_imputer": "median",
+    "categorical_encoder": "one_hot_handle_unknown_ignore",
+    "numeric_scaling": "standard"
+  },
+  "model_selection_split": "validation",
+  "final_evaluation_split": "test",
+  "threshold_selection": "validation_max_f1",
+  "models": {
+    "logistic_regression": {
+      "C": 1.0,
+      "max_iter": 2000,
+      "class_weight": "balanced"
+    },
+    "random_forest": {
+      "n_estimators": 300,
+      "max_depth": 6,
+      "min_samples_leaf": 3,
+      "class_weight": "balanced",
+      "n_jobs": 1
+    }
+  }
+}

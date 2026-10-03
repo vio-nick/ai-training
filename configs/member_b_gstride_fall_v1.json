@@ -1,0 +1,11 @@
+{
+  "workflow_version": "member_b_gstride_fall_v1",
+  "base_training_config_path": "configs/gstride_fall_v1.json",
+  "data_version": "gstride_fall_v1",
+  "report_directory": "reports/member_b",
+  "calibration_bins": 5,
+  "threshold_impact_values": [0.25, 0.5, 0.75],
+  "subgroup_template_columns": ["sex", "age_group", "device_type"],
+  "inference_example_model": "random_forest",
+  "fusion_result_status": "not_run_no_second_clinical_modality"
+}

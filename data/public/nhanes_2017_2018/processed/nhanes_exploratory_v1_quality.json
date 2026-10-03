@@ -1,0 +1,39 @@
+{
+  "n_rows": 865,
+  "label_counts": {
+    "0": 681,
+    "1": 184
+  },
+  "osteoporosis_diagnosis_counts": {
+    "0": 810,
+    "1": 55
+  },
+  "missing_counts": {
+    "participant_id": 0,
+    "fracture_history": 0,
+    "osteoporosis_diagnosis": 0,
+    "age_years": 0,
+    "sex_at_birth": 0,
+    "bmi_kg_m2": 0,
+    "lumbar_spine_bmd_g_cm2": 245,
+    "pelvis_bmd_g_cm2": 245,
+    "head_bmd_g_cm2": 156,
+    "survey_exam_weight": 0,
+    "survey_stratum": 0,
+    "survey_psu": 0
+  },
+  "split_counts": {
+    "test": 173,
+    "train": 519,
+    "validation": 173
+  },
+  "source_sha256": {
+    "DEMO_J": "c0b46e0345ea19404928656277c8b0d10b0cca348a9b2fe4fc3c67e8b7ee73ec",
+    "BMX_J": "8d675e42d8826ac98714b2c3dd4c5138a5e353fb4424f7eff5e6db4a01ce838a",
+    "OSQ_J": "e278ea3b723456a7760f5ec288e0eac199300089587c1c457eb88a2a1b99e02b",
+    "DXX_J": "de16420ff3f978f72dbcc6a83c64de041440f29ad1f516f5e1cc5476af994ff1"
+  },
+  "feature_table_sha256": "8e3135791b2ef70469bc84ee2ca181f1f1d249c7a91b7e6f32748037c7ea4f4f",
+  "split_sha256": "50f182d40b4d7e19726935dae81d4bd3b1c38445303a21b835fd05a53ae19f12",
+  "seed": 20260808
+}

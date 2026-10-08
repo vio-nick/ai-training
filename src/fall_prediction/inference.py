@@ -1,4 +1,4 @@
-"""Small inference adapter coupling a fitted model with its input contract."""
+"""Inference wrapper for a released GSTRIDE estimator."""
 
 from __future__ import annotations
 

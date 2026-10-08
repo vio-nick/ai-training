@@ -1,9 +1,4 @@
-"""Evaluation utilities for retrospective binary faller-recognition models.
-
-The functions in this module consume held-out probabilities.  They never fit,
-recalibrate, or otherwise change the model, so validation/test boundaries
-remain auditable.
-"""
+"""Metrics and review tables for the retrospective faller model."""
 
 from __future__ import annotations
 
@@ -83,7 +78,7 @@ def threshold_impact(y_true: Iterable[int], probabilities: Iterable[float], thre
 
 
 def calibration_table(y_true: Iterable[int], probabilities: Iterable[float], n_bins: int = 10) -> list[dict[str, float | int | None]]:
-    """Return fixed-width calibration bins, retaining empty bins explicitly."""
+    """Return fixed-width calibration bins, including empty bins."""
     if n_bins < 2:
         raise ValueError("n_bins must be at least 2.")
     y, p = _arrays(y_true, probabilities)
@@ -109,7 +104,7 @@ def expected_calibration_error(calibration: Iterable[Mapping[str, object]], tota
 
 
 def calibration_summary(y_true: Iterable[int], probabilities: Iterable[float], n_bins: int = 5) -> dict[str, object]:
-    """Calculate fixed-bin reliability diagnostics without changing predictions."""
+    """Return fixed-width calibration diagnostics."""
 
     if n_bins < 2:
         raise ValueError("n_bins must be at least 2.")
@@ -172,7 +167,7 @@ def error_analysis(frame: pd.DataFrame, y_true: Iterable[int], probabilities: It
 
 
 def error_cases(frame: pd.DataFrame, *, id_column: str, label_column: str, probability_column: str, threshold: float) -> pd.DataFrame:
-    """Return false positives/negatives in a deterministic review order."""
+    """Return false positives and false negatives sorted for review."""
 
     required = [id_column, label_column, probability_column]
     missing = [column for column in required if column not in frame.columns]
@@ -191,21 +186,8 @@ def error_cases(frame: pd.DataFrame, *, id_column: str, label_column: str, proba
     ).reset_index(drop=True)
 
 
-def subgroup_metrics(frame: pd.DataFrame, subgroup_column: str, y_true: Iterable[int], probabilities: Iterable[float], threshold: float) -> list[dict[str, object]]:
-    if subgroup_column not in frame.columns:
-        raise ValueError(f"Missing subgroup column: {subgroup_column}")
-    y, p = _arrays(y_true, probabilities)
-    if len(frame) != len(y):
-        raise ValueError("Frame and predictions must have equal row counts.")
-    result = []
-    for value, index in frame.groupby(subgroup_column, dropna=False, sort=True).groups.items():
-        indices = np.asarray(list(index), dtype=int)
-        result.append({"subgroup": str(value), **binary_metrics(y[indices], p[indices], threshold)})
-    return result
-
-
 def subgroup_template(frame: pd.DataFrame, *, label_column: str, probability_column: str, threshold: float, subgroup_columns: Iterable[str]) -> pd.DataFrame:
-    """Report supplied subgroup fields and record unavailable fields transparently."""
+    """Report requested subgroups and mark fields absent from the frame."""
 
     rows: list[dict[str, object]] = []
     for column in subgroup_columns:

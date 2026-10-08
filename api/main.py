@@ -1,4 +1,4 @@
-"""HTTP adapter for a fixed GSTRIDE model release (origin/memberB API integrated)."""
+"""HTTP API for the released GSTRIDE model."""
 
 from contextlib import asynccontextmanager
 import logging

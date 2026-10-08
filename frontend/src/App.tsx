@@ -53,7 +53,7 @@ export default function App() {
             <span>跌倒风险研究评估软件</span>
           </h1>
           <p className="home-description">
-            从步态参数出发，了解评估结果与特征解释。
+            输入六项步态参数，查看既往跌倒识别分数和参数贡献。
           </p>
           <Button size="lg" className="home-start" onClick={() => setStarted(true)}>
             开始使用
@@ -81,8 +81,8 @@ function Workbench() {
     prediction: Prediction;
     input: Inputs;
   } | null>(null);
-  const [busy, setBusy] = useState(false),
-    [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
   useEffect(() => () => controller.current?.abort(), []);
   async function submit(input: Inputs) {
@@ -414,9 +414,9 @@ function Workbench() {
         </div>
         <div className="workflow">
           {[
-            { title: "输入参数", text: "填写六项步态参数，可选填记录编号。" },
-            { title: "模型评分", text: "点击“开始评估”，使用固定模型计算。" },
-            { title: "结果解释", text: "查看评分及各项特征对分数的贡献。" },
+            { title: "输入参数", text: "六项步态参数和可选记录编号。" },
+            { title: "模型评分", text: "固定模型根据输入计算分数。" },
+            { title: "结果解释", text: "查看分数和各参数的贡献。" },
           ].map((s, i) => (
             <div className="workflow-step" key={s.title}>
               <span className="step-number">{i + 1}</span>

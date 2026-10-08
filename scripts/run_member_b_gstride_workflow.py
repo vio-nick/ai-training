@@ -1,9 +1,4 @@
-"""Run Member B's configuration-driven GSTRIDE training, evaluation and inference workflow.
-
-The only formal results generated here use the six GSTRIDE gait features and
-the retrospective faller_last_year label.  The fusion framework is deliberately
-not trained because no compatible BMD or hospital longitudinal modality exists.
-"""
+"""Train the GSTRIDE models and write the Member B evaluation report."""
 
 from __future__ import annotations
 
@@ -63,8 +58,8 @@ def main() -> None:
         "workflow_version": workflow["workflow_version"],
         "data_version": base["data_version"],
         "interface_contract": "gstride_fall_v1",
-        "task_definition": "Retrospective recognition of self-reported fall during the year before the gait test.",
-        "not_a_claim": "Not prospective fall prediction, fracture-risk prediction, osteoporosis diagnosis, or clinical screening.",
+        "task_definition": "Recognize self-reported falls during the year before the gait test.",
+        "not_a_claim": "Not for future-fall or fracture-risk prediction, osteoporosis diagnosis, or screening.",
         "config_sha256": {"workflow": sha256(WORKFLOW_CONFIG_PATH), "base_training": sha256(base_path)},
         "split_sizes": {"train": len(train), "validation": len(validation), "test": len(test)},
         "environment": {"python": platform.python_version(), "scikit_learn": sklearn.__version__},
@@ -80,7 +75,7 @@ def main() -> None:
             ],
             "decision_threshold_note": "The model-specific decision_threshold creates predicted_label and is independent of the three display bands.",
         },
-        "fusion": {"status": workflow["fusion_result_status"], "reason": "No version-compatible BMD/hospital longitudinal modality is available."},
+        "fusion": {"status": workflow["fusion_result_status"], "reason": "No compatible BMD or longitudinal hospital data is available."},
         "models": {},
     }
 
@@ -131,7 +126,7 @@ def main() -> None:
             "calibration_on_held_out_test": calibration_summary(test[label], probability, n_bins=int(workflow["calibration_bins"])),
             "threshold_impact_on_held_out_test": threshold_impact(test[label], probability, [*workflow["threshold_impact_values"], model.threshold]),
             "error_case_count": len(errors),
-            "subgroup_status": "Template records unavailable fields because the six-feature contract contains no demographic/clinical fields.",
+            "subgroup_status": "The six-feature input has no demographic or clinical fields for subgroup analysis.",
             "explainability": explanation,
         }
 
@@ -140,7 +135,7 @@ def main() -> None:
             result["inference_example"] = {
                 "input": example,
                 "output": model.predict_record(example, data_version=str(base["data_version"])),
-                "assurance": "The public inference method selects feature columns only and does not consume the label.",
+                "assurance": "Inference selects feature columns and ignores the label.",
             }
 
     output = report_dir / "gstride_fall_v1_member_b_workflow.json"

@@ -1,8 +1,4 @@
-"""Explicit feature/probability fusion interfaces for future hospital modalities.
-
-GSTRIDE currently provides only gait features.  These generic functions keep
-future BMD or clinical fusion versioned and prevent silent missing-modality use.
-"""
+"""Combine feature groups or model probabilities when they are available."""
 
 from __future__ import annotations
 
@@ -12,7 +8,7 @@ from typing import Mapping, Sequence
 import numpy as np
 import pandas as pd
 
-from .contracts import ContractValidationError, ensure_columns_exist
+from .contracts import ContractValidationError
 
 MISSING_MODALITY_POLICIES = {"error", "available_only", "impute_zero"}
 
@@ -33,16 +29,8 @@ def _policy(policy: str) -> None:
         raise ValueError(f"Unknown missing-modality policy {policy!r}; expected {sorted(MISSING_MODALITY_POLICIES)}")
 
 
-def modality_availability(frame: pd.DataFrame, modalities: Sequence[ModalitySpec]) -> dict[str, bool]:
-    result: dict[str, bool] = {}
-    for modality in modalities:
-        ensure_columns_exist(modality.feature_columns, frame, modality.name)
-        result[modality.name] = not frame.loc[:, list(modality.feature_columns)].isna().any().any()
-    return result
-
-
 def early_fuse_features(frame: pd.DataFrame, modalities: Sequence[ModalitySpec], *, missing_policy: str = "error") -> tuple[pd.DataFrame, dict[str, object]]:
-    """Concatenate declared modality features and record the degradation path."""
+    """Select the declared feature groups and record missing-data handling."""
     _policy(missing_policy)
     if not modalities:
         raise ValueError("At least one modality must be declared.")
@@ -76,7 +64,7 @@ def early_fuse_features(frame: pd.DataFrame, modalities: Sequence[ModalitySpec],
 
 
 def late_fuse_probabilities(probabilities: Mapping[str, Sequence[float] | np.ndarray], *, weights: Mapping[str, float] | None = None, required_modalities: Sequence[str] = (), missing_policy: str = "error") -> tuple[np.ndarray, dict[str, object]]:
-    """Return a weighted probability average with modality provenance."""
+    """Return a weighted average of the supplied probability vectors."""
     _policy(missing_policy)
     if not probabilities:
         raise ValueError("At least one modality probability vector is required.")
@@ -109,7 +97,13 @@ def hybrid_fuse_probabilities(early_probability: Sequence[float] | np.ndarray, l
     early = np.asarray(early_probability, dtype=float)
     if early.ndim != 1 or not len(early) or not np.isfinite(early).all() or ((early < 0) | (early > 1)).any():
         raise ValueError("Early-fusion probabilities must be finite, non-empty and in [0, 1].")
-    late, provenance = late_fuse_probabilities(late_probabilities, weights=late_weights, missing_policy=missing_policy)
+    late, late_metadata = late_fuse_probabilities(
+        late_probabilities, weights=late_weights, missing_policy=missing_policy
+    )
     if len(early) != len(late):
         raise ValueError("Early and late probability vectors must have equal length.")
-    return early_weight * early + (1 - early_weight) * late, {"fusion_type": "hybrid", "early_weight": early_weight, "late": provenance}
+    return early_weight * early + (1 - early_weight) * late, {
+        "fusion_type": "hybrid",
+        "early_weight": early_weight,
+        "late": late_metadata,
+    }

@@ -1,4 +1,4 @@
-"""Config-driven single-modality training wrapper for Member B workflows."""
+"""Training helpers for the GSTRIDE model."""
 
 from __future__ import annotations
 

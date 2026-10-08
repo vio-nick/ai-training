@@ -29,7 +29,7 @@ def main() -> None:
     summary: dict[str, object] = {
         "data_version": config["data_version"],
         "evaluation_scope": "held-out GSTRIDE test set; retrospective faller recognition only",
-        "subgroup_caveat": "No demographic or clinical subgroup fields are present in the six-feature contract; unavailable fields are recorded as templates.",
+        "subgroup_caveat": "The six-feature contract has no demographic or clinical subgroup fields.",
         "models": {},
     }
     for name in config["models"]:

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Mapping, Sequence
+from typing import Mapping
 
 import numpy as np
 import pandas as pd
@@ -101,9 +101,3 @@ def contract_from_config(config: Mapping[str, object]) -> InputContract:
         )
     except KeyError as exc:
         raise ContractValidationError(f"Training configuration is missing {exc.args[0]!r}.") from exc
-
-
-def ensure_columns_exist(columns: Sequence[str], frame: pd.DataFrame, name: str) -> None:
-    missing = [column for column in columns if column not in frame.columns]
-    if missing:
-        raise ContractValidationError(f"Modality {name!r} is missing declared column(s): {missing}")

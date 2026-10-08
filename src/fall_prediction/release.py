@@ -7,7 +7,6 @@ import json
 import os
 import platform
 from pathlib import Path
-from typing import Any, Mapping
 
 import joblib
 import sklearn
@@ -23,17 +22,16 @@ class ReleaseIntegrityError(ValueError):
     """Raised when a model release is incomplete, incompatible, or altered."""
 
 
-def sha256_file(path: Path) -> str:
+def sha256_file(path):
     """Return a file digest without loading its full content into memory."""
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
 
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
-
-def _validate_manifest(manifest: Mapping[str, Any]) -> None:
+def _validate_manifest(manifest):
     required = {
         "release_format", "release_id", "model_filename", "model_sha256",
         "data_version", "model_name", "decision_threshold", "feature_columns",
@@ -48,19 +46,14 @@ def _validate_manifest(manifest: Mapping[str, Any]) -> None:
         )
     if manifest["model_filename"] != MODEL_FILENAME:
         raise ReleaseIntegrityError("Release manifest names an unexpected model file.")
-    threshold = manifest["decision_threshold"]
-    if not isinstance(threshold, (int, float)) or not 0 <= float(threshold) <= 1:
+    thresh = manifest["decision_threshold"]
+    if not isinstance(thresh, (int, float)) or not 0 <= float(thresh) <= 1:
         raise ReleaseIntegrityError("Release manifest contains an invalid decision threshold.")
     if not isinstance(manifest["feature_columns"], list) or not manifest["feature_columns"]:
         raise ReleaseIntegrityError("Release manifest must declare at least one feature column.")
 
 
-def _release_manifest(
-    model: FallerInferenceModel,
-    *,
-    release_id: str,
-    training: Mapping[str, Any],
-) -> dict[str, Any]:
+def _release_manifest(model, *, release_id, training):
     return {
         "release_format": RELEASE_FORMAT,
         "release_id": release_id,
@@ -80,60 +73,42 @@ def _release_manifest(
     }
 
 
-def save_model_release(
-    model: FallerInferenceModel,
-    release_dir: str | Path,
-    *,
-    release_id: str,
-    training: Mapping[str, Any],
-    overwrite: bool = False,
-) -> dict[str, Any]:
-    """Persist one fully fitted model package and its integrity manifest.
-
-    The fitted estimator includes all preprocessing.  New inference records are
-    never included in this operation; callers must explicitly invoke this
-    release-building function with the approved historical training table.
-    """
-
+def save_model_release(model, release_dir, *, release_id, training, overwrite=False):
+    """Persist one fully fitted model package and its integrity manifest."""
     if not isinstance(model, FallerInferenceModel):
         raise TypeError("Only FallerInferenceModel instances can be released.")
-    destination = Path(release_dir)
-    destination.mkdir(parents=True, exist_ok=True)
-    model_path = destination / MODEL_FILENAME
-    manifest_path = destination / MANIFEST_FILENAME
+    dest = Path(release_dir)
+    dest.mkdir(parents=True, exist_ok=True)
+    model_path = dest / MODEL_FILENAME
+    manifest_path = dest / MANIFEST_FILENAME
     if not overwrite and (model_path.exists() or manifest_path.exists()):
         raise FileExistsError(
-            f"Release destination already contains a model or manifest: {destination}. Use overwrite=True to replace it."
+            f"Release destination already has a model or manifest: {dest}. Use overwrite=True to replace it."
         )
 
-    temporary_model = destination / f".{MODEL_FILENAME}.tmp"
+    tmp_model = dest / f".{MODEL_FILENAME}.tmp"
     try:
-        joblib.dump(model, temporary_model)
-        os.replace(temporary_model, model_path)
+        joblib.dump(model, tmp_model)
+        os.replace(tmp_model, model_path)
         manifest = _release_manifest(model, release_id=release_id, training=training)
         manifest["model_sha256"] = sha256_file(model_path)
-        temporary_manifest = destination / f".{MANIFEST_FILENAME}.tmp"
-        temporary_manifest.write_text(
+        tmp_manifest = dest / f".{MANIFEST_FILENAME}.tmp"
+        tmp_manifest.write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
-        os.replace(temporary_manifest, manifest_path)
+        os.replace(tmp_manifest, manifest_path)
     finally:
-        if temporary_model.exists():
-            temporary_model.unlink()
+        if tmp_model.exists():
+            tmp_model.unlink()
 
     return manifest
 
 
-def load_model_release(release_dir: str | Path) -> tuple[FallerInferenceModel, dict[str, Any]]:
-    """Load a trusted model release after verifying its file digest and contract.
-
-    Joblib files are executable Python serializations.  Only load release
-    directories created by a trusted project workflow.
-    """
-
-    directory = Path(release_dir)
-    manifest_path = directory / MANIFEST_FILENAME
-    model_path = directory / MODEL_FILENAME
+def load_model_release(release_dir):
+    """Load a trusted model release after verifying its file digest and contract."""
+    d = Path(release_dir)
+    manifest_path = d / MANIFEST_FILENAME
+    model_path = d / MODEL_FILENAME
     if not manifest_path.is_file() or not model_path.is_file():
         raise ReleaseIntegrityError("Release must contain both manifest.json and model.joblib.")
     try:
@@ -149,7 +124,7 @@ def load_model_release(release_dir: str | Path) -> tuple[FallerInferenceModel, d
 
     try:
         model = joblib.load(model_path)
-    except Exception as exc:  # joblib exposes several implementation-specific exceptions
+    except Exception as exc:
         raise ReleaseIntegrityError(f"Cannot load model artifact: {exc}") from exc
     if not isinstance(model, FallerInferenceModel):
         raise ReleaseIntegrityError("Serialized artifact is not a FallerInferenceModel.")

@@ -36,28 +36,27 @@ class ContractValidationError(ValueError):
     """Raised when model input violates its versioned contract."""
 
 
-def require_compatible_version(actual: str, expected: str) -> None:
+def require_compatible_version(actual, expected):
     if actual != expected:
         raise ContractValidationError(f"Incompatible data version {actual!r}; model requires {expected!r}.")
 
 
 def validate_feature_frame(
-    frame: pd.DataFrame,
-    contract: InputContract,
+    frame,
+    contract,
     *,
-    data_version: str | None = None,
-    allow_missing_values: bool = True,
-    require_label: bool = False,
-    require_unique_id: bool = False,
-) -> pd.DataFrame:
+    data_version=None,
+    allow_missing_values=True,
+    require_label=False,
+    require_unique_id=False,
+):
     """Validate and return ordered numeric features without mutating ``frame``."""
-
     if not isinstance(frame, pd.DataFrame):
         raise ContractValidationError("Model input must be a pandas DataFrame.")
     if data_version is not None:
         require_compatible_version(data_version, contract.data_version)
     required = list(contract.feature_columns)
-    missing = [column for column in required if column not in frame.columns]
+    missing = [c for c in required if c not in frame.columns]
     if missing:
         raise ContractValidationError(f"Missing required feature column(s): {missing}")
     if require_label:
@@ -76,7 +75,8 @@ def validate_feature_frame(
     values = raw.apply(pd.to_numeric, errors="coerce")
     invalid = values.isna() & ~raw.isna()
     if invalid.any().any():
-        raise ContractValidationError(f"Non-numeric feature value(s) in: {invalid.any(axis=0)[lambda s: s].index.tolist()}")
+        bad_cols = invalid.any(axis=0)[lambda s: s].index.tolist()
+        raise ContractValidationError(f"Non-numeric feature value(s) in: {bad_cols}")
     numeric = values.to_numpy(dtype=float, na_value=np.nan)
     if np.isinf(numeric).any():
         raise ContractValidationError("Feature values must be finite when present.")
@@ -85,13 +85,13 @@ def validate_feature_frame(
     return values
 
 
-def validate_feature_record(record: Mapping[str, object], contract: InputContract, *, data_version: str | None = None) -> pd.DataFrame:
+def validate_feature_record(record, contract, *, data_version=None):
     if not isinstance(record, Mapping):
         raise ContractValidationError("Inference input must be a mapping.")
     return validate_feature_frame(pd.DataFrame([dict(record)]), contract, data_version=data_version)
 
 
-def contract_from_config(config: Mapping[str, object]) -> InputContract:
+def contract_from_config(config):
     try:
         return InputContract(
             data_version=str(config["data_version"]),

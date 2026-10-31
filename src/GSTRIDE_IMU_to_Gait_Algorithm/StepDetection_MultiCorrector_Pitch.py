@@ -43,6 +43,13 @@ def StepDetection_MultiCorrector_Pitch(angles, Gyr, orientation, fs):
         if move[i - 1] == Th2 and move[i] == 0:
             endMove = np.concatenate((endMove, i), axis=None)
 
+    # A recording can end while a movement interval is still open.  In that
+    # case the transition arrays have different lengths; pair only complete
+    # start/end intervals so the original detector can continue safely.
+    if len(newMove) != len(endMove):
+        pair_count = min(len(newMove), len(endMove))
+        newMove = newMove[:pair_count]
+        endMove = endMove[:pair_count]
     distMove = endMove - newMove
     midMove = np.floor((newMove + endMove) / 2)
     #-----------------------------------------------------------------------------------------------------------------

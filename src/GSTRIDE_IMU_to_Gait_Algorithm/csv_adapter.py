@@ -54,6 +54,7 @@ class GaitRun:
     end_still: np.ndarray
     phases: np.ndarray
     gpe: Gait_Parameters_Estimation
+    zupt_anchors: np.ndarray | None = None
 
 
 def _read_numeric_csv(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -125,20 +126,28 @@ def load_calibrated_csv(
 
 
 def run_gait_algorithm(imu: CalibratedIMU, path: str | Path) -> GaitRun:
-    """Run the existing AHRS, event, ZUPT and parameter algorithms."""
+    """Run the original main.py AHRS, event, ZUPT and parameter sequence.
+
+    The ZUPT anchor is the detector's third returned event, midFF. Keep this
+    identical to main.py when the input is adapted from CSV.
+    """
 
     ahrs = MahonyAHRS(imu.fs, len(imu.acc))
     for index in range(len(imu.acc)):
         ahrs.UpdateIMU(imu.gyr[index], imu.acc[index])
     detected = StepDetection_MultiCorrector_Pitch(ahrs.angles, imu.gyr, 0, imu.fs)
-    still, _, new_still, end_still, _, _, _, _, _, _, _, _, phases, pitch0 = detected
+    still, _, new_still, end_still, _, _, mid_ff, _, _, _, _, _, phases, pitch0 = detected
     if len(new_still) == 0 or len(end_still) == 0:
         raise InputQualityError(f"{path}: no qualifying initial static segment was detected")
     if len(phases) == 0:
         raise InputQualityError(f"{path}: no gait phases were detected")
-    zupt = INS_ZUPT(imu.fs, len(phases))
-    zupt.UPDATE_ZUPT(imu.acc, imu.gyr, phases[:, 0], still)
-    gpe = Gait_Parameters_Estimation(len(phases))
+    if len(mid_ff) != len(phases):
+        raise InputQualityError(
+            f"{path}: detected {len(mid_ff)} mid-foot-flat anchors for {len(phases)} gait cycles"
+        )
+    zupt = INS_ZUPT(imu.fs, len(mid_ff))
+    zupt.UPDATE_ZUPT(imu.acc, imu.gyr, mid_ff, still)
+    gpe = Gait_Parameters_Estimation(len(mid_ff))
     gpe.estimate(
         phases,
         zupt.Speed_G_corr,
@@ -156,6 +165,7 @@ def run_gait_algorithm(imu: CalibratedIMU, path: str | Path) -> GaitRun:
         end_still=end_still,
         phases=phases,
         gpe=gpe,
+        zupt_anchors=mid_ff,
     )
 
 
@@ -186,24 +196,92 @@ def _cycle_quality(run: GaitRun) -> tuple[np.ndarray, list[dict[str, Any]]]:
     return mask, rejected
 
 
-def _aggregate(gpe: Gait_Parameters_Estimation, mask: np.ndarray) -> dict[str, float]:
-    def mean(name: str) -> float:
-        values = np.asarray(getattr(gpe, name), dtype=float)[mask]
-        return float(np.mean(values))
+def _aggregate(
+    gpe: Gait_Parameters_Estimation,
+    mask: np.ndarray,
+    *,
+    minimum_feature_cycles: int,
+) -> tuple[dict[str, float], dict[str, int], dict[str, list[int]]]:
+    """Match the per-feature robust summaries used by the GSTRIDE register.
 
-    tcycle = np.asarray(gpe.tcycle, dtype=float)[mask]
-    if len(tcycle) == 0:
-        raise InputQualityError("no usable gait cycles remain after quality filtering")
-    mean_swing = mean("Pswing")
-    mean_cycle = float(np.mean(tcycle))
-    return {
-        "step_speed_m_s": mean("speed"),
-        "cadence_strides_per_min": mean("cadence"),
-        "stride_length_m": mean("StrideLengths"),
-        "double_support_pct": mean("PTO") + mean("PHS"),
-        "swing_to_stance_ratio": mean_swing / (100.0 - mean_swing),
-        "stride_time_cv_pct": 100.0 * float(np.std(tcycle)) / mean_cycle,
+    Gait_Parameters_Estimation.statistics applies trunc_array independently
+    to each gait measure. Its fixed limit retains values within 40%-140% of
+    that measure's median. The register derives the six model features from
+    those separately summarized means and standard deviations.
+    """
+    fields = {
+        "tcycle": "tcycle",
+        "cadence": "cadence",
+        "speed": "speed",
+        "stride_length": "StrideLengths",
+        "load": "PTO",
+        "swing": "Pswing",
+        "push": "PHS",
+        "foot_flat": "PFF",
     }
+    retained: dict[str, np.ndarray] = {}
+    retained_indices: dict[str, list[int]] = {}
+    candidate_indices = np.flatnonzero(mask)
+    for key, attribute in fields.items():
+        values = np.asarray(getattr(gpe, attribute), dtype=float)[mask]
+        finite = np.isfinite(values)
+        values = values[finite]
+        indices = candidate_indices[finite]
+        if values.size == 0:
+            raise InputQualityError(f"no finite {attribute} values remain after cycle quality filtering")
+        trimmed = np.asarray(gpe.trunc_array(values), dtype=float)
+        if len(trimmed) < minimum_feature_cycles or not np.isfinite(trimmed).all():
+            raise InputQualityError(
+                f"only {len(trimmed)} {attribute} values remain after training-compatible trimming; "
+                f"at least {minimum_feature_cycles} are required"
+            )
+        retained[key] = trimmed
+        median = float(np.median(values))
+        lower = median * gpe.limit
+        upper = median * (1.0 + gpe.limit)
+        if median > 0:
+            inliers = (values <= upper) & (values >= lower)
+        else:
+            inliers = (values >= upper) & (values <= lower)
+        if not np.array_equal(values[inliers], trimmed):
+            raise InputQualityError("feature trimming disagrees with Gait_Parameters_Estimation.trunc_array")
+        retained_indices[key] = indices[inliers].astype(int).tolist()
+
+    # The public Database_register stores GPE.statistics values at the
+    # precision used by Gait_Parameters_Estimation. Reproduce that rounding
+    # before deriving the model's register-level features.
+    decimals = {
+        "tcycle": 3,
+        "cadence": 3,
+        "speed": 3,
+        "stride_length": 3,
+        "load": 2,
+        "swing": 2,
+        "push": 2,
+        "foot_flat": 2,
+    }
+    means = {
+        key: float(f"{np.mean(values):.{decimals[key]}f}")
+        for key, values in retained.items()
+    }
+    stride_times = retained["tcycle"]
+    cycle_std = float(f"{np.std(stride_times, ddof=0):.3f}")
+    stance_pct = means["load"] + means["foot_flat"] + means["push"]
+    if stance_pct <= 0 or means["tcycle"] <= 0:
+        raise InputQualityError("non-positive stance percentage or stride time after aggregation")
+    features = {
+        "step_speed_m_s": means["speed"],
+        "cadence_strides_per_min": means["cadence"],
+        "stride_length_m": means["stride_length"],
+        "double_support_pct": means["load"] + means["push"],
+        "swing_to_stance_ratio": means["swing"] / stance_pct,
+        "stride_time_cv_pct": 100.0 * cycle_std / means["tcycle"],
+    }
+    return (
+        features,
+        {key: len(values) for key, values in retained.items()},
+        retained_indices,
+    )
 
 
 def summarize_gait(
@@ -211,6 +289,7 @@ def summarize_gait(
     *,
     allow_quality_fail: bool = False,
     minimum_valid_cycles: int = 3,
+    minimum_feature_cycles: int = 3,
     use_valid_cycles: bool = False,
 ) -> dict[str, Any]:
     """Return model features plus an auditable cycle quality result."""
@@ -229,7 +308,11 @@ def summarize_gait(
         used_mask = mask
     else:
         used_mask = mask if quality_ok else np.ones(len(run.phases), dtype=bool)
-    features = _aggregate(run.gpe, used_mask)
+    features, feature_inlier_counts, feature_inlier_indices = _aggregate(
+        run.gpe,
+        used_mask,
+        minimum_feature_cycles=minimum_feature_cycles,
+    )
     return {
         "input_path": run.input_path,
         "rows_resampled": int(len(run.calibrated_imu.timestamp_s)),
@@ -239,11 +322,9 @@ def summarize_gait(
         "valid_cycle_count": valid_count,
         "minimum_valid_cycles": minimum_valid_cycles,
         "quality_status": "pass" if quality_ok else "fail_allow_quality_override",
-        "aggregation_mode": (
-            "valid_cycles_only"
-            if (use_valid_cycles or quality_ok)
-            else "all_cycles_on_quality_override"
-        ),
+        "aggregation_mode": "gstride_register_per_feature_median_40pct_trim",
+        "feature_inlier_counts": feature_inlier_counts,
+        "feature_inlier_cycle_indices": feature_inlier_indices,
         "quality_rejected_cycles": rejected,
         "used_cycle_indices": np.flatnonzero(used_mask).astype(int).tolist(),
         "features": features,

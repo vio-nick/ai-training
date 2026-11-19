@@ -58,6 +58,8 @@ def _write_output(path: Path, results: list[dict[str, Any]]) -> None:
 
 
 def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     args = parse_args()
     model, manifest = load_model_release(args.release_dir)
     if args.input_json:
